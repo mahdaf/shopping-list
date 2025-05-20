@@ -10,6 +10,19 @@ const CustomForm = ({ addItem }) => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      const validFormats = ["image/jpeg", "image/png", "image/jpg"];
+      const maxSize = 1 * 1024 * 1024; // 1 MB
+
+      if (!validFormats.includes(file.type)) {
+        alert("Hanya file JPG, JPEG, dan PNG yang diperbolehkan.");
+        return;
+      }
+
+      if (file.size > maxSize) {
+        alert("Ukuran file tidak boleh lebih dari 1 MB.");
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setImage(reader.result); // Set image as base64 URL
