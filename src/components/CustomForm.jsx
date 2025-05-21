@@ -66,7 +66,7 @@ const CustomForm = ({ addItem }) => {
           id="price"
           className="input"
           value={price}
-          step="1000" // <-- Ini kunci utamanya
+          step="1000"
           onInput={(e) => setPrice(e.target.value)}
           required
           placeholder="Harga Barang"
