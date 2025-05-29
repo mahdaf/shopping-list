@@ -1,3 +1,18 @@
+<<<<<<< HEAD
+=======
+.checkbox:checked {
+  background-color: hsl(var(--accent));
+  display: grid;
+  place-items: center;
+}
+
+.checkbox:checked::after {
+  content: '✔'; /* Tambahkan simbol centang */
+  color: hsl(var(--bg));
+  font-size: 0.8em;
+}
+
+>>>>>>> daftarbelanja/master
 .task {
   display: flex;
   align-items: center;
@@ -51,6 +66,7 @@
     0 0 0 .225em hsl(var(--accent) / .3);
 }
 
+<<<<<<< HEAD
 .checkmark {
   content: '';
   position: absolute;
@@ -72,6 +88,18 @@
 
 .checkbox:checked {
   background-color: hsl(var(--accent));
+=======
+.checkbox:checked {
+  background-color: hsl(var(--accent));
+  display: grid;
+  place-items: center;
+}
+
+.checkbox:checked::after {
+  content: '✔'; /* Tambahkan simbol centang */
+  color: hsl(var(--bg));
+  font-size: 0.8em;
+>>>>>>> daftarbelanja/master
 }
 
 .checkbox:checked+label {
@@ -117,4 +145,12 @@
 .textContainer {
   text-align: left; 
   font-size: 1.2rem; 
+<<<<<<< HEAD
+=======
+}
+
+.purchased {
+  opacity: 0.6;
+  text-decoration: line-through;
+>>>>>>> daftarbelanja/master
 }
