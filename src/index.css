@@ -242,3 +242,24 @@ hr {
   border: 0.1em solid hsl(var(--accent) / 0.3);
   box-shadow: 0 -1em 3em hsl(var(--muted)), 0 1em 3em hsl(var(--accent) / 0.2);
 }
+
+.search-wrapper {
+  margin: 1em 0;
+  text-align: center;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 0.5em;
+  font-size: 1rem;
+  border: 1px solid hsl(var(--muted));
+  border-radius: var(--_radius);
+  outline: none;
+  box-shadow: 0 0 0.5em hsl(var(--accent) / 0.3);
+}
+
+.search-input:focus {
+  border-color: hsl(var(--accent));
+  box-shadow: 0 0 0.5em hsl(var(--accent) / 0.5);
+}

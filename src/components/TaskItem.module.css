@@ -1,3 +1,15 @@
+.checkbox:checked {
+  background-color: hsl(var(--accent));
+  display: grid;
+  place-items: center;
+}
+
+.checkbox:checked::after {
+  content: '✔'; /* Tambahkan simbol centang */
+  color: hsl(var(--bg));
+  font-size: 0.8em;
+}
+
 .task {
   display: flex;
   align-items: center;
@@ -51,27 +63,16 @@
     0 0 0 .225em hsl(var(--accent) / .3);
 }
 
-.checkmark {
-  content: '';
-  position: absolute;
-  width: 1em;
-  height: 1em;
-  display: grid;
-  place-items: center;
-  top: 50%;
-  color: hsl(var(--muted));
-  border-radius: var(--_radius);
-  transform: translate3d(calc(-100% - var(--taskgroup-gap)), -50%, 0);
-  transition: background-color 80ms ease-in-out;
-}
-
-.checkmark svg {
-  width: .75em;
-  height: .75em;
-}
-
 .checkbox:checked {
   background-color: hsl(var(--accent));
+  display: grid;
+  place-items: center;
+}
+
+.checkbox:checked::after {
+  content: '✔'; /* Tambahkan simbol centang */
+  color: hsl(var(--bg));
+  font-size: 0.8em;
 }
 
 .checkbox:checked+label {
@@ -117,4 +118,9 @@
 .textContainer {
   text-align: left; 
   font-size: 1.2rem; 
+}
+
+.purchased {
+  opacity: 0.6;
+  text-decoration: line-through;
 }
