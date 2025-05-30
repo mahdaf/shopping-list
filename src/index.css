@@ -241,8 +241,6 @@ hr {
   border-radius: var(--_radius);
   border: 0.1em solid hsl(var(--accent) / 0.3);
   box-shadow: 0 -1em 3em hsl(var(--muted)), 0 1em 3em hsl(var(--accent) / 0.2);
-<<<<<<< HEAD
-=======
 }
 
 .search-wrapper {
@@ -264,5 +262,4 @@ hr {
 .search-input:focus {
   border-color: hsl(var(--accent));
   box-shadow: 0 0 0.5em hsl(var(--accent) / 0.5);
->>>>>>> daftarbelanja/master
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { auth } from '../firebase';
 
 // custom hooks
 import useFirestoreCollection from './hooks/useFirestoreCollection';
@@ -65,10 +66,20 @@ function App() {
     item.nama && item.nama.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Logout handler
+  const handleLogout = () => {
+    if (window.confirm("Apakah Anda yakin ingin logout?")) {
+      auth.signOut();
+    }
+  };
+``
   return (
     <div className="container">
-      <header>
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h1>Daftar Belanja Saya</h1>
+        <button className="btn" onClick={handleLogout}>
+          Logout
+        </button>
       </header>
       {isEditing && (
         <EditForm
