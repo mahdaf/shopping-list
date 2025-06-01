@@ -11,11 +11,11 @@ FROM node:16
 WORKDIR /app
 # Install serve globally
 RUN npm install -g serve
-# Copy the build folder from the builder stage
-COPY --from=builder /app/build ./build
+# Copy the dist folder from the builder stage
+COPY --from=builder /app/dist ./dist
 # Set the port environment variable
 ENV PORT=8080
 # Expose the port
 EXPOSE $PORT
-# Run serve to serve the build folder
-CMD ["sh", "-c", "serve -s build -l $PORT"]
+# Run serve to serve the dist folder
+CMD ["sh", "-c", "serve -s dist -l $PORT"]
