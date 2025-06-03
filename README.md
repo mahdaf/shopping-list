@@ -12,6 +12,7 @@ Aplikasi Daftar Belanja adalah sebuah aplikasi web yang dirancang untuk membantu
     * Beralih antara mode Terang (Light) dan Gelap (Dark) sesuai preferensi Anda.
     * Ubah warna aksen utama aplikasi untuk personalisasi tampilan.
 * **Unggah Gambar**: Tambahkan gambar untuk setiap barang belanjaan untuk referensi visual yang lebih baik.
+* **Pencarian Barang**: Dapat melakukan pencarian barang sesuai dengan keinginan pengguna.
 
 ## 🛠️ Teknologi (Tech Stack)
 
@@ -22,6 +23,11 @@ Proyek ini dibangun menggunakan beberapa teknologi modern:
 * **CSS**: Menggunakan CSS murni dengan *Custom Properties* untuk tema yang dinamis dan *CSS Modules* untuk *styling* komponen yang terisolasi.
 * **Heroicons**: Untuk ikon SVG yang modern dan bersih di seluruh aplikasi.
 * **Firebase Firestore**: Basis data NoSQL berbasis *cloud* untuk menyimpan dan menyinkronkan data.
+* **Jest**: Untuk memastikan kode dapat berfungsi dengan benar.
+* **Eslint**: Untuk melakukan pengecekan kode dan memastikan bahwa tidak ada kesalahan kodenya.
+* **Uptime Kuma**: Untuk melakukan monitoring kode.
+* **Docker**:Untuk memastikan aplikasi dapat dijalankan secara konsisten diberbagai lingkungan.
+* **VPS**: Opensource untuk melakukan deployment aplikasi.
 
 
 ## 🚀 Instalasi dan Menjalankan Proyek
