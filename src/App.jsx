@@ -76,7 +76,7 @@ function App() {
   return (
     <div className="container">
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1>Daftar Belanja Saya</h1>
+        <h1>Daftar Belanja Olid</h1>
         <button className="btn" onClick={handleLogout}>
           Logout
         </button>
