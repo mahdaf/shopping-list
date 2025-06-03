@@ -65,7 +65,7 @@ const EditForm = ({ editedTask, updateTask, closeEditMode }) => {
             maxLength={60}
             placeholder="Update Nama Barang"
           />
-          <label htmlFor="editNama" className="label">Update Nama Barang</label>
+          <label htmlFor="editNama" className="label">Update Nama Anda</label>
         </div>
         <div className="wrapper">
           <input
