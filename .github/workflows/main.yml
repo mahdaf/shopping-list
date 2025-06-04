@@ -28,7 +28,7 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/my-app:${{ github.ref_name == 'main' && 'production' || 'staging' }}
+            ${{ secrets.DOCKER_USERNAME }}/shopping-list:${{ github.ref_name == 'main' && 'production' || 'staging' }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -45,7 +45,7 @@ jobs:
           password: ${{ secrets.PRODUCTION_PASSWORD }}
           port: 22
           script: |
-            docker pull ${{ secrets.DOCKER_USERNAME }}/my-app:production
-            docker stop my-app || true
-            docker rm my-app || true
-            docker run -d --name my-app -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/my-app:production
+            docker pull ${{ secrets.DOCKER_USERNAME }}/shopping-list:production
+            docker stop shopping-list || true
+            docker rm shopping-list || true
+            docker run -d --name shopping-list -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/shopping-list:production
