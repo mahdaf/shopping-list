@@ -32,15 +32,20 @@ export default defineConfig([
     },
     rules: {
       "no-unused-vars": ["warn", { 
-        "varsIgnorePattern": "^(React|CustomForm|EditForm|TaskList|ThemeSwitcher|TaskItem|PlusIcon|CheckIcon|PencilSquareIcon|TrashIcon|XMarkIcon|SunIcon|MoonIcon|SwatchIcon|App|Login)$",
+        "vars": "all",
+        "args": "after-used",
+        "ignoreRestSiblings": true,
         "argsIgnorePattern": "^_",
-        "ignoreRestSiblings": true
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
       }],
       "react/react-in-jsx-scope": "off",
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": ["warn", {
         "additionalHooks": "(useMyCustomHook|useMyOtherHook)"
       }],
+      "react/jsx-uses-react": "error",
+      "react/jsx-uses-vars": "error"
     },
   },
 ]);
