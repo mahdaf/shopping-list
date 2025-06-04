@@ -13,7 +13,7 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       onLogin();
-    } catch (err) {
+    } catch {
       setError("Your input is incorrect/the account does not exist.");
     }
   };

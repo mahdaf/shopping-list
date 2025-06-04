@@ -8,6 +8,7 @@ const EditForm = ({ editedTask, updateTask, closeEditMode }) => {
   const [updatedHarga, setUpdatedHarga] = useState(editedTask.harga);
   const [updatedJumlah, setUpdatedJumlah] = useState(editedTask.jumlah);
   const [updatedImg, setUpdatedImg] = useState(editedTask.img);
+  const [imgValid, setImgValid] = useState(true);
 
   useEffect(() => {
     const closeModalIfEscaped = (e) => {
@@ -24,16 +25,41 @@ const EditForm = ({ editedTask, updateTask, closeEditMode }) => {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      const validFormats = ["image/jpeg", "image/png", "image/jpg"];
+      const maxSize = 1 * 1024 * 1024; // 1 MB
+
+      if (!validFormats.includes(file.type)) {
+        alert("Hanya file JPG, JPEG, dan PNG yang diperbolehkan.");
+        setUpdatedImg("");
+        setImgValid(false);
+        return;
+      }
+
+      if (file.size > maxSize) {
+        alert("Ukuran file tidak boleh lebih dari 1 MB.");
+        setUpdatedImg("");
+        setImgValid(false);
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
-        setUpdatedImg(reader.result); // Set updated image as base64 URL
+        setUpdatedImg(reader.result);
+        setImgValid(true);
       };
       reader.readAsDataURL(file);
+    } else {
+      setUpdatedImg("");
+      setImgValid(false);
     }
   };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
+    if (!imgValid) {
+      alert("Gambar tidak valid. Silakan upload gambar yang sesuai (JPG/PNG/JPEG kurang dari 1 MB).");
+      return;
+    }
     updateTask({
       ...editedTask,
       nama: updatedNama,

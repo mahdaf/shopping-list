@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { PlusIcon } from "@heroicons/react/24/solid";
 
 const CustomForm = ({ addItem }) => {
-  const [nama, setNama] = useState("");
-  const [harga, setHarga] = useState("");
-  const [jumlah, setJumlah] = useState("");
-  const [img, setImg] = useState("");
+  const [formData, setFormData] = useState({
+    nama: "",
+    harga: "",
+    jumlah: "",
+    img: "",
+    imgValid: true
+  });
 
   const DEFAULT_IMG = "src/assets/shop.png";
 
@@ -17,34 +20,70 @@ const CustomForm = ({ addItem }) => {
 
       if (!validFormats.includes(file.type)) {
         alert("Hanya file JPG, JPEG, dan PNG yang diperbolehkan.");
+        setFormData(prev => ({
+          ...prev,
+          img: "",
+          imgValid: false
+        }));
         return;
       }
 
       if (file.size > maxSize) {
         alert("Ukuran file tidak boleh lebih dari 1 MB.");
+        setFormData(prev => ({
+          ...prev,
+          img: "",
+          imgValid: false
+        }));
         return;
       }
 
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImg(reader.result); // Set image as base64 URL
+        setFormData(prev => ({
+          ...prev,
+          img: reader.result,
+          imgValid: true
+        }));
       };
       reader.readAsDataURL(file);
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        img: "",
+        imgValid: true
+      }));
     }
+  };
+
+  const handleInputChange = (e) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [id]: value
+    }));
   };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
+    if (!formData.imgValid) {
+      alert("Gambar tidak valid. Silakan upload gambar yang sesuai (JPG/PNG/JPEG kurang dari 1 MB).");
+      return;
+    }
     addItem({
-      nama,
-      harga,
-      jumlah,
-      img: img || DEFAULT_IMG // gunakan gambar default jika img kosong
+      nama: formData.nama,
+      harga: formData.harga,
+      jumlah: formData.jumlah,
+      img: formData.img || DEFAULT_IMG
     });
-    setNama("");
-    setHarga("");
-    setJumlah("");
-    setImg("");
+    setFormData({
+      nama: "",
+      harga: "",
+      jumlah: "",
+      img: "",
+      imgValid: true
+    });
+    e.target.reset();
   };
 
   return (
@@ -54,21 +93,21 @@ const CustomForm = ({ addItem }) => {
           type="text"
           id="nama"
           className="input"
-          value={nama}
-          onInput={(e) => setNama(e.target.value)}
+          value={formData.nama}
+          onChange={handleInputChange}
           required
           placeholder="Nama Barang"
         />
-        <label htmlFor="nama" className="label">Nama Item</label>
+        <label htmlFor="nama" className="label">Nama Barang</label>
       </div>
       <div className="wrapper">
         <input
           type="number"
           id="harga"
           className="input"
-          value={harga}
+          value={formData.harga}
           step="1000"
-          onInput={(e) => setHarga(e.target.value)}
+          onChange={handleInputChange}
           required
           placeholder="Harga Barang"
         />
@@ -79,8 +118,8 @@ const CustomForm = ({ addItem }) => {
           type="number"
           id="jumlah"
           className="input"
-          value={jumlah}
-          onInput={(e) => setJumlah(e.target.value)}
+          value={formData.jumlah}
+          onChange={handleInputChange}
           required
           placeholder="Jumlah Barang"
         />
@@ -94,7 +133,7 @@ const CustomForm = ({ addItem }) => {
           accept="image/*"
           onChange={handleImageUpload}
         />
-        <label htmlFor="img" className="label">Unggah Gambar (opsional)</label>
+        <label htmlFor="img" className="label">Unggah Gambar</label>
       </div>
       <button className="btn" aria-label="Add Item" type="submit">
         <PlusIcon />

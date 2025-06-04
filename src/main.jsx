@@ -6,7 +6,7 @@ import Register from "./register";
 import { auth } from "../firebase";
 import "./index.css";
 
-const Root = () => {
+const AppRoot = () => {
   const [user, setUser] = useState(null);
   const [showRegister, setShowRegister] = useState(false);
 
@@ -31,6 +31,6 @@ const Root = () => {
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <Root />
+    <AppRoot />
   </React.StrictMode>
 );

@@ -1,5 +1,5 @@
 # Build stage
-FROM node:16 AS builder
+FROM node:20 AS builder
 WORKDIR /app
 # Copy all files to ensure public and src are available
 COPY . .
@@ -7,7 +7,7 @@ RUN npm ci
 RUN npm run build
 
 # Production stage
-FROM node:16
+FROM node:20
 WORKDIR /app
 # Install serve globally
 RUN npm install -g serve
