@@ -59,7 +59,7 @@ const CustomForm = ({ addItem }) => {
           required
           placeholder="Nama Barang"
         />
-        <label htmlFor="nama" className="label">Nama Saya</label>
+        <label htmlFor="nama" className="label">Nama Item</label>
       </div>
       <div className="wrapper">
         <input
