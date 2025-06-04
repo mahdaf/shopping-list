@@ -6,6 +6,7 @@ const CustomForm = ({ addItem }) => {
   const [harga, setHarga] = useState("");
   const [jumlah, setJumlah] = useState("");
   const [img, setImg] = useState("");
+  const [imgValid, setImgValid] = useState(true);
 
   const DEFAULT_IMG = "src/assets/shop.png";
 
@@ -17,24 +18,36 @@ const CustomForm = ({ addItem }) => {
 
       if (!validFormats.includes(file.type)) {
         alert("Hanya file JPG, JPEG, dan PNG yang diperbolehkan.");
+        setImg("");
+        setImgValid(false);
         return;
       }
 
       if (file.size > maxSize) {
         alert("Ukuran file tidak boleh lebih dari 1 MB.");
+        setImg("");
+        setImgValid(false);
         return;
       }
 
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImg(reader.result); // Set image as base64 URL
+        setImg(reader.result);
+        setImgValid(true);
       };
       reader.readAsDataURL(file);
+    } else {
+      setImg("");
+      setImgValid(true);
     }
   };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
+    if (!imgValid) {
+      alert("Gambar tidak valid. Silakan upload gambar yang sesuai (JPG/PNG/JPEG kurang dari 1 MB).");
+      return;
+    }
     addItem({
       nama,
       harga,
@@ -45,6 +58,8 @@ const CustomForm = ({ addItem }) => {
     setHarga("");
     setJumlah("");
     setImg("");
+    setImgValid(true);
+    e.target.reset();
   };
 
   return (
@@ -59,7 +74,7 @@ const CustomForm = ({ addItem }) => {
           required
           placeholder="Nama Barang"
         />
-        <label htmlFor="nama" className="label">Nama Item</label>
+        <label htmlFor="nama" className="label">Nama Barang</label>
       </div>
       <div className="wrapper">
         <input
@@ -94,7 +109,7 @@ const CustomForm = ({ addItem }) => {
           accept="image/*"
           onChange={handleImageUpload}
         />
-        <label htmlFor="img" className="label">Unggah Gambar (opsional)</label>
+        <label htmlFor="img" className="label">Unggah Gambar</label>
       </div>
       <button className="btn" aria-label="Add Item" type="submit">
         <PlusIcon />

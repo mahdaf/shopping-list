@@ -31,10 +31,16 @@ export default defineConfig([
       react: { version: "detect" },
     },
     rules: {
-      "no-unused-vars": "warn",
+      "no-unused-vars": ["warn", { 
+        "varsIgnorePattern": "^(React|CustomForm|EditForm|TaskList|ThemeSwitcher|TaskItem|PlusIcon|CheckIcon|PencilSquareIcon|TrashIcon|XMarkIcon|SunIcon|MoonIcon|SwatchIcon|App|Login)$",
+        "argsIgnorePattern": "^_",
+        "ignoreRestSiblings": true
+      }],
       "react/react-in-jsx-scope": "off",
       "react-hooks/rules-of-hooks": "error",
-      "react-hooks/exhaustive-deps": "warn",
+      "react-hooks/exhaustive-deps": ["warn", {
+        "additionalHooks": "(useMyCustomHook|useMyOtherHook)"
+      }],
     },
   },
 ]);

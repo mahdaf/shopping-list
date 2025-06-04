@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 // styles
 import styles from './TaskItem.module.css';
 import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';

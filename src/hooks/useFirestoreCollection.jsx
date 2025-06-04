@@ -38,7 +38,7 @@ const useFirestoreCollection = () => {
       }
     );
     return () => unsubscribe();
-  }, [auth.currentUser]);
+  }, []);
 
   // CREATE
   const addItem = async (item) => {
