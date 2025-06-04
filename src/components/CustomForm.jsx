@@ -6,6 +6,7 @@ const CustomForm = ({ addItem }) => {
   const [harga, setHarga] = useState("");
   const [jumlah, setJumlah] = useState("");
   const [img, setImg] = useState("");
+  const [imgValid, setImgValid] = useState(false);
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -15,24 +16,36 @@ const CustomForm = ({ addItem }) => {
 
       if (!validFormats.includes(file.type)) {
         alert("Hanya file JPG, JPEG, dan PNG yang diperbolehkan.");
+        setImg("");
+        setImgValid(false);
         return;
       }
 
       if (file.size > maxSize) {
         alert("Ukuran file tidak boleh lebih dari 1 MB.");
+        setImg("");
+        setImgValid(false);
         return;
       }
 
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImg(reader.result); // Set image as base64 URL
+        setImg(reader.result);
+        setImgValid(true);
       };
       reader.readAsDataURL(file);
+    } else {
+      setImg("");
+      setImgValid(false);
     }
   };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
+    if (!imgValid) {
+      alert("Gambar tidak valid. Silakan upload gambar yang sesuai (JPG/PNG/JPEG kurang dari 1 MB).");
+      return;
+    }
     addItem({
       nama,
       harga,
@@ -43,6 +56,8 @@ const CustomForm = ({ addItem }) => {
     setHarga("");
     setJumlah("");
     setImg("");
+    setImgValid(false);
+    e.target.reset();
   };
 
   return (
