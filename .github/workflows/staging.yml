@@ -8,7 +8,6 @@ on:
 jobs:
   SonarCloud:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
         with:
@@ -25,9 +24,26 @@ jobs:
             -Dsonar.projectKey=${{ secrets.SONAR_PK }}
             -Dsonar.python.coverage.reportPaths=coverage.xml
 
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run ESLint
+        run: npx eslint . --ext .js,.jsx --max-warnings=0
+
   build-and-push:
     runs-on: ubuntu-latest
-    needs: SonarCloud
+    needs: [SonarCloud, lint]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
