@@ -16,6 +16,10 @@ function App() {
   const [isEditing, setIsEditing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Ambil nama user dari email
+  const user = auth.currentUser;
+  const userName = user && user.email ? user.email.split('@')[0] : "User";
+
   // Validasi dan tambah item
   const handleAddItem = (item) => {
     if (!item.nama || !item.harga || !item.jumlah) {
@@ -71,12 +75,12 @@ function App() {
     if (window.confirm("Apakah Anda yakin ingin logout?")) {
       auth.signOut();
     }
-  };
-``
-  return (
-    <div className="container">
+};
+
+return (
+  <div className="container">
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1>Daftar Belanja Olid</h1>
+        <h1>Daftar Belanja {userName}</h1>
         <button className="btn" onClick={handleLogout}>
           Logout
         </button>
