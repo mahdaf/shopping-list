@@ -7,7 +7,8 @@ Aplikasi Daftar Belanja adalah sebuah aplikasi web yang dirancang untuk membantu
 * **Manajemen Barang (CRUD)**: Fungsionalitas penuh untuk membuat, membaca, memperbarui, dan menghapus (CRUD) item dalam daftar belanja.
 * **Formulir Interaktif**: Tambahkan barang baru lengkap dengan nama, harga, jumlah, dan gambar melalui form yang mudah digunakan.
 * **Edit Data**: Ubah detail barang yang sudah ada, termasuk nama, harga, jumlah, dan gambar.
-* **Penyimpanan Lokal**: Semua data daftar belanja disimpan secara otomatis di Firebase.
+* **Penyimpanan Cloud**: Semua data daftar belanja disimpan secara otomatis di Firebase.
+* **Authentication**: Pengguna dapat masuk dan membuat akun untuk menyimpan data belanjanya.
 * **Kustomisasi Tema**:
     * Beralih antara mode Terang (Light) dan Gelap (Dark) sesuai preferensi Anda.
     * Ubah warna aksen utama aplikasi untuk personalisasi tampilan.
@@ -23,12 +24,10 @@ Proyek ini dibangun menggunakan beberapa teknologi modern:
 * **CSS**: Menggunakan CSS murni dengan *Custom Properties* untuk tema yang dinamis dan *CSS Modules* untuk *styling* komponen yang terisolasi.
 * **Heroicons**: Untuk ikon SVG yang modern dan bersih di seluruh aplikasi.
 * **Firebase Firestore**: Basis data NoSQL berbasis *cloud* untuk menyimpan dan menyinkronkan data.
+* **Firebase Authentication**: Untuk mengelola otentikasi pengguna dengan mudah dan aman.
 * **Jest**: Untuk memastikan kode dapat berfungsi dengan benar.
 * **Eslint**: Untuk melakukan pengecekan kode dan memastikan bahwa tidak ada kesalahan kodenya.
-* **Uptime Kuma**: Untuk melakukan monitoring kode.
 * **Docker**:Untuk memastikan aplikasi dapat dijalankan secara konsisten diberbagai lingkungan.
-* **VPS**: Opensource untuk melakukan deployment aplikasi.
-
 
 ## 🚀 Instalasi dan Menjalankan Proyek
 
@@ -36,12 +35,12 @@ Untuk menjalankan proyek ini di lingkungan lokal Anda, ikuti langkah-langkah ber
 
 1.  **Clone repositori ini:**
     ```bash
-    git clone https://github.com/mahdaf/daftarbelanja.git
+    git clone https://github.com/mahdaf/shopping-list.git
     ```
 
 2.  **Masuk ke direktori proyek:**
     ```bash
-    cd daftarbelanja
+    cd shopping-list
     ```
 
 3.  **Instal semua dependensi yang dibutuhkan:**
