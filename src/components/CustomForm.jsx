@@ -7,6 +7,8 @@ const CustomForm = ({ addItem }) => {
   const [jumlah, setJumlah] = useState("");
   const [img, setImg] = useState("");
 
+  const DEFAULT_IMG = "src/assets/shop.png";
+
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -37,7 +39,7 @@ const CustomForm = ({ addItem }) => {
       nama,
       harga,
       jumlah,
-      img
+      img: img || DEFAULT_IMG // gunakan gambar default jika img kosong
     });
     setNama("");
     setHarga("");
@@ -57,7 +59,7 @@ const CustomForm = ({ addItem }) => {
           required
           placeholder="Nama Barang"
         />
-        <label htmlFor="nama" className="label">Nama Saya</label>
+        <label htmlFor="nama" className="label">Nama Item</label>
       </div>
       <div className="wrapper">
         <input
@@ -91,9 +93,8 @@ const CustomForm = ({ addItem }) => {
           className="input"
           accept="image/*"
           onChange={handleImageUpload}
-          required
         />
-        <label htmlFor="img" className="label">Unggah Gambar</label>
+        <label htmlFor="img" className="label">Unggah Gambar (opsional)</label>
       </div>
       <button className="btn" aria-label="Add Item" type="submit">
         <PlusIcon />
