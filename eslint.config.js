@@ -32,7 +32,7 @@ export default defineConfig([
     },
     rules: {
       "no-unused-vars": ["warn", { 
-        "varsIgnorePattern": "^(React|CustomForm|EditForm|TaskList|ThemeSwitcher|TaskItem|PlusIcon|CheckIcon|PencilSquareIcon|TrashIcon|XMarkIcon|SunIcon|MoonIcon|SwatchIcon|App|Login)$",
+        "varsIgnorePattern": "^(React|CustomForm|EditForm|TaskList|ThemeSwitcher|TaskItem|PlusIcon|CheckIcon|PencilSquareIcon|TrashIcon|XMarkIcon|SunIcon|MoonIcon|SwatchIcon|App|Login|Register|AppRoot)$",
         "argsIgnorePattern": "^_",
         "ignoreRestSiblings": true
       }],
