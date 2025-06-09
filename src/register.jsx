@@ -20,7 +20,7 @@ const Register = () => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       alert("Akun berhasil dibuat! Silakan login.");
-      navigate("/login"); // ✅ redirect ke login
+      navigate("/login");
     } catch (err) {
       setError(err.message);
     }

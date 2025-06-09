@@ -15,7 +15,7 @@ const Login = () => {
     setError("");
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      navigate("/beranda"); // <-- diarahkan ke /beranda
+      navigate("/beranda"); 
     } catch {
       setError("Your input is incorrect or the account does not exist.");
     }

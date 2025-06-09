@@ -5,7 +5,8 @@ import {
   getAuth,
   setPersistence,
   browserSessionPersistence
-} from "firebase/auth"; // ⬅️ tambahkan ini
+} from "firebase/auth"; 
+
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -24,7 +25,7 @@ const db = getFirestore(app);
 
 const auth = getAuth(app);
 
-// ✅ tambahkan ini untuk paksa session hanya berlaku per tab (bukan permanen)
+// memaksa session hanya berlaku per tab (bukan permanen)
 setPersistence(auth, browserSessionPersistence).catch((err) => {
   console.error("Gagal set session persistence:", err);
 });

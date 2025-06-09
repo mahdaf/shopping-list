@@ -7,14 +7,18 @@ import styles from './TaskList.module.css';
 const TaskList = ({ items, deleteItem, enterEditMode }) => {
   return (
     <ul className={styles.tasks}>
-      {items.sort((a, b) => b.id - a.id).map(item => (
-        <TaskItem
-          key={item.id}
-          item={item}
-          deleteItem={deleteItem}
-          enterEditMode={enterEditMode}
-        />
-      ))}
+      {items.length === 0 ? (
+        <p>Belum ada daftar belanja.</p>
+      ) : (
+        items.sort((a, b) => b.id - a.id).map(item => (
+          <TaskItem
+            key={item.id}
+            item={item}
+            deleteItem={deleteItem}
+            enterEditMode={enterEditMode}
+          />
+        ))
+      )}
     </ul>
   );
 };

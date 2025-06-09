@@ -10,7 +10,7 @@ const CustomForm = ({ addItem }) => {
     imgValid: true
   });
 
-  const DEFAULT_IMG = "src/assets/shop.png";
+  const DEFAULT_IMG = "https://raw.githubusercontent.com/mahdaf/shopping-list/refs/heads/main/src/assets/shop.png";
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -98,7 +98,7 @@ const CustomForm = ({ addItem }) => {
           required
           placeholder="Nama Barang"
         />
-        <label htmlFor="nama" className="label">Nama Barang Anda</label>
+        <label htmlFor="nama" className="label">Nama Barang</label>
       </div>
       <div className="wrapper">
         <input
