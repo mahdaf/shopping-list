@@ -20,7 +20,8 @@ function App() {
   const idleTimer = useRef(null);
 
   const user = auth.currentUser;
-  const userName = user && user.email ? user.email.split('@')[0] : "User";
+  const userNameRaw = user && user.email ? user.email.split('@')[0] : "User";
+  const userName = userNameRaw.charAt(0).toUpperCase() + userNameRaw.slice(1);
 
   // AUTO LOGOUT: deteksi tidak ada aktivitas selama 1 menit
   useEffect(() => {
@@ -33,7 +34,7 @@ function App() {
 
     const resetTimer = () => {
       if (idleTimer.current) clearTimeout(idleTimer.current);
-      idleTimer.current = setTimeout(logoutUser, 500 * 1000); // 1 menit
+      idleTimer.current = setTimeout(logoutUser, 600 * 1000); // 1 menit
     };
 
     const events = ["mousemove", "keydown", "click", "scroll", "touchstart"];
