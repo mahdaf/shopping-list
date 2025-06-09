@@ -33,7 +33,7 @@ function App() {
 
     const resetTimer = () => {
       if (idleTimer.current) clearTimeout(idleTimer.current);
-      idleTimer.current = setTimeout(logoutUser, 500 * 1000); // 1 menit
+      idleTimer.current = setTimeout(logoutUser, 600 * 1000); // 1 menit
     };
 
     const events = ["mousemove", "keydown", "click", "scroll", "touchstart"];
