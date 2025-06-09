@@ -14,6 +14,8 @@ Aplikasi Daftar Belanja adalah sebuah aplikasi web yang dirancang untuk membantu
     * Ubah warna aksen utama aplikasi untuk personalisasi tampilan.
 * **Unggah Gambar**: Tambahkan gambar untuk setiap barang belanjaan untuk referensi visual yang lebih baik.
 * **Pencarian Barang**: Dapat melakukan pencarian barang sesuai dengan keinginan pengguna.
+* **Login**: Pengguna dapat melakukan login akun dan akun terdaftar didalam firebase firestore.
+* **Register**: Pengguna dapat melakukan registrasi akun dan akan terdaftar didalam firebase forestore.
 
 ## 🛠️ Teknologi (Tech Stack)
 
@@ -27,7 +29,7 @@ Proyek ini dibangun menggunakan beberapa teknologi modern:
 * **Firebase Authentication**: Untuk mengelola otentikasi pengguna dengan mudah dan aman.
 * **Jest**: Untuk memastikan kode dapat berfungsi dengan benar.
 * **Eslint**: Untuk melakukan pengecekan kode dan memastikan bahwa tidak ada kesalahan kodenya.
-* **Docker**:Untuk memastikan aplikasi dapat dijalankan secara konsisten diberbagai lingkungan.
+* **Docker**: Untuk memastikan aplikasi dapat dijalankan secara konsisten diberbagai lingkungan.
 
 ## 🚀 Instalasi dan Menjalankan Proyek
 
