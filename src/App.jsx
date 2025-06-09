@@ -23,7 +23,7 @@ function App() {
   const userNameRaw = user && user.email ? user.email.split('@')[0] : "User";
   const userName = userNameRaw.charAt(0).toUpperCase() + userNameRaw.slice(1);
 
-  // AUTO LOGOUT: deteksi tidak ada aktivitas selama 1 menit
+
   useEffect(() => {
     const logoutUser = () => {
       alert("Anda telah logout karena tidak ada aktivitas selama 1 menit.");
