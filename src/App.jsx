@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
 
-// custom hooks
+// customs hooks
 import useFirestoreCollection from './hooks/useFirestoreCollection';
 
 // custom components
