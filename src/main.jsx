@@ -26,7 +26,9 @@ const Root = () => {
   return (
     <BrowserRouter>
       <Routes>
++       {/* Tambahan route /beranda yang juga merender App.jsx */}
         <Route path="/" element={<ProtectedRoute><App /></ProtectedRoute>} />
++       <Route path="/beranda" element={<ProtectedRoute><App /></ProtectedRoute>} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="*" element={<Navigate to="/" replace />} />
