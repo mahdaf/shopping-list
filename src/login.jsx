@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { auth } from "../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { useNavigate, Link } from "react-router-dom";
 
-const Login = ({ onLogin, onSwitchToRegister }) => {
+const Login = () => {
+  const navigate = useNavigate();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -12,9 +15,9 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
     setError("");
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      onLogin();
+      navigate("/"); // redirect setelah login
     } catch {
-      setError("Your input is incorrect/the account does not exist.");
+      setError("Your input is incorrect or the account does not exist.");
     }
   };
 
@@ -28,7 +31,7 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
             className="input"
             placeholder="Email"
             value={email}
-            onInput={e => setEmail(e.target.value)}
+            onInput={(e) => setEmail(e.target.value)}
             required
           />
           <label className="label">Email</label>
@@ -39,16 +42,16 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
             className="input"
             placeholder="Password"
             value={password}
-            onInput={e => setPassword(e.target.value)}
+            onInput={(e) => setPassword(e.target.value)}
             required
           />
           <label className="label">Password</label>
         </div>
         <button className="btn" type="submit">Login</button>
       </form>
-      {error && <p style={{color:"red"}}>{error}</p>}
+      {error && <p style={{ color: "red" }}>{error}</p>}
       <p>
-        Belum punya akun? <a href="#" onClick={onSwitchToRegister}>Daftar di sini</a>
+        Belum punya akun? <Link to="/register">Daftar di sini</Link>
       </p>
     </div>
   );
