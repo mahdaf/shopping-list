@@ -1,12 +1,13 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { getAuth } from "firebase/auth";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import {
+  getAuth,
+  setPersistence,
+  browserSessionPersistence
+} from "firebase/auth"; // ⬅️ tambahkan ini
 
 // Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyB9lA_bmun3Ut9pQzDGEEHJj8g4cVhv2bY",
   authDomain: "shop-list-21b61.firebaseapp.com",
@@ -20,5 +21,12 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
 const auth = getAuth(app);
+
+// ✅ tambahkan ini untuk paksa session hanya berlaku per tab (bukan permanen)
+setPersistence(auth, browserSessionPersistence).catch((err) => {
+  console.error("Gagal set session persistence:", err);
+});
+
 export { db, auth };

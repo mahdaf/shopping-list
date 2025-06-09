@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { auth } from '../firebase';
+import { useNavigate } from 'react-router-dom';
 
 // custom hooks
 import useFirestoreCollection from './hooks/useFirestoreCollection';
@@ -11,49 +12,58 @@ import TaskList from './components/TaskList';
 import ThemeSwitcher from './components/ThemeSwitcher';
 
 function App() {
+  const navigate = useNavigate();
   const { items, loading, error, addItem, updateItem, deleteItem } = useFirestoreCollection();
   const [editedItem, setEditedItem] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const idleTimer = useRef(null);
 
-  // Ambil nama user dari email
   const user = auth.currentUser;
   const userName = user && user.email ? user.email.split('@')[0] : "User";
 
-  // Validasi dan tambah item
+  // AUTO LOGOUT: deteksi tidak ada aktivitas selama 1 menit
+  useEffect(() => {
+    const logoutUser = () => {
+      alert("Anda telah logout karena tidak ada aktivitas selama 1 menit.");
+      auth.signOut().then(() => {
+        navigate("/login");
+      });
+    };
+
+    const resetTimer = () => {
+      if (idleTimer.current) clearTimeout(idleTimer.current);
+      idleTimer.current = setTimeout(logoutUser, 600 * 1000); // 1 menit
+    };
+
+    const events = ["mousemove", "keydown", "click", "scroll", "touchstart"];
+    events.forEach(event => window.addEventListener(event, resetTimer));
+    resetTimer(); // inisialisasi timer
+
+    return () => {
+      events.forEach(event => window.removeEventListener(event, resetTimer));
+      clearTimeout(idleTimer.current);
+    };
+  }, [navigate]);
+
   const handleAddItem = (item) => {
     if (!item.nama || !item.harga || !item.jumlah) {
       alert("Semua field harus diisi!");
       return;
     }
-    const newItem = {
-      nama: item.nama,
-      harga: item.harga,
-      jumlah: item.jumlah,
-      img: item.img
-    };
-    addItem(newItem);
+    addItem({ ...item });
   };
 
-  // Update item
   const handleUpdateItem = (item) => {
-    updateItem({
-      id: item.id,
-      nama: item.nama,
-      harga: item.harga,
-      jumlah: item.jumlah,
-      img: item.img
-    });
+    updateItem({ ...item });
     setIsEditing(false);
     setEditedItem(null);
   };
 
-  // Delete item
   const handleDeleteItem = (id) => {
     deleteItem(id);
   };
 
-  // Toggle purchased
   const handleTogglePurchased = (id) => {
     const item = items.find(i => i.id === id);
     if (item) {
@@ -70,21 +80,23 @@ function App() {
     item.nama && item.nama.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Logout handler
   const handleLogout = () => {
     if (window.confirm("Apakah Anda yakin ingin logout?")) {
-      auth.signOut();
+      auth.signOut().then(() => {
+        navigate("/login");
+      });
     }
-};
+  };
 
-return (
-  <div className="container">
+  return (
+    <div className="container">
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h1>Daftar Belanja {userName}</h1>
         <button className="btn" onClick={handleLogout}>
           Logout
         </button>
       </header>
+
       {isEditing && (
         <EditForm
           editedTask={editedItem}
@@ -92,7 +104,9 @@ return (
           closeEditMode={() => setIsEditing(false)}
         />
       )}
+
       <CustomForm addItem={handleAddItem} />
+
       <div className="search-wrapper">
         <input
           type="text"
@@ -102,11 +116,12 @@ return (
           onChange={(e) => setSearchQuery(e.target.value)}
         />
       </div>
+
       {loading ? (
         <p>Loading...</p>
       ) : error ? (
         <p style={{ color: 'red' }}>{error}</p>
-      ) : filteredItems && (
+      ) : (
         <TaskList
           items={filteredItems}
           deleteItem={handleDeleteItem}
@@ -114,6 +129,7 @@ return (
           togglePurchased={handleTogglePurchased}
         />
       )}
+
       <ThemeSwitcher />
     </div>
   );

@@ -183,7 +183,7 @@ hr {
 }
 
 .label {
-  text-transform: uppercase;
+  text-transform: none;
   font-size: 0.5em;
   pointer-events: none;
   letter-spacing: 0.05em;
