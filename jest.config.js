@@ -1,7 +1,7 @@
 export default {
   testEnvironment: 'jsdom',
   transform: {
-    '^.+\\.(js|jsx)$': ['babel-jest', { configFile: './babel.config.js' }],
+    '^.+\\.(js|jsx)$': 'babel-jest',
   },
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
@@ -22,16 +22,5 @@ export default {
       statements: 70,
     },
   },
-  reporters: [
-    "default",
-    ["jest-stare", {
-      "resultDir": "results/jest-stare",
-      "reportTitle": "Shopping List Test Report",
-      "coverageLink": "../coverage/lcov-report/index.html",
-      "jestStareConfigJson": "jest-stare.json",
-      "jestGlobalConfigJson": "jest.config.json",
-      "reportHeadline": "Shopping List Test Results",
-      "reportSummary": true
-    }]
-  ]
+  reporters: ['default'],
 }; 

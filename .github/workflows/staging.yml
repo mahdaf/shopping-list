@@ -24,31 +24,6 @@ jobs:
             -Dsonar.projectKey=${{ secrets.SONAR_PK }}
             -Dsonar.python.coverage.reportPaths=coverage.xml
 
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run tests with report
-        run: npm run test:report
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-results
-          path: |
-            results/jest-stare
-            coverage
-
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -65,6 +40,23 @@ jobs:
 
       - name: Run ESLint
         run: npx eslint . --ext .js,.jsx
+        
+ test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm run test:coverage
 
   build-and-push:
     runs-on: ubuntu-latest
