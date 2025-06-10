@@ -1,3 +1,5 @@
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
 // styles
 import styles from './TaskItem.module.css';
 import { PencilSquareIcon, TrashIcon } from '@heroicons/react/24/outline';
@@ -41,3 +43,19 @@ const TaskItem = ({ item, deleteItem, enterEditMode }) => {
 };
 
 export default TaskItem;
+
+if (process.env.NODE_ENV === 'test') {
+  describe('TaskItem Component', () => {
+    const mockTask = {
+      id: 1,
+      nama: 'Test Task',
+      img: 'test-image.jpg',
+      completed: false
+    };
+
+    test('renders task title', () => {
+      render(<TaskItem item={mockTask} />);
+      expect(screen.getByText('Test Task')).toBeInTheDocument();
+    });
+  });
+}

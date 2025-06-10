@@ -11,8 +11,7 @@ export default {
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.js'],
   collectCoverageFrom: [
     'src/**/*.{js,jsx}',
-    '!src/main.jsx',
-    '!src/vite-env.d.ts',
+    '!src/main.jsx'
   ],
   coverageThreshold: {
     global: {
@@ -23,4 +22,15 @@ export default {
     },
   },
   reporters: ['default'],
-}; 
+  testMatch: [
+    '<rootDir>/src/**/*.{js,jsx}'
+  ],
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    'src/setupTests.js',
+    'src/components/EditForm.jsx',
+    'src/components/CustomForm.jsx'
+    // 'src/register.jsx',
+    // 'src/login.jsx'
+  ]
+};

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { auth } from "../firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useNavigate, Link } from "react-router-dom";
+import { render, screen } from "@testing-library/react";
+import { BrowserRouter } from "react-router-dom";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -63,3 +65,16 @@ const Register = () => {
 };
 
 export default Register;
+
+if (process.env.NODE_ENV === 'test') {
+  describe('Register Component', () => {
+    it('renders without crashing', () => {
+      render(
+        <BrowserRouter>
+          <Register />
+        </BrowserRouter>
+      );
+      expect(screen.getByRole('heading', { name: /Register/i })).toBeInTheDocument();
+    });
+  });
+}
