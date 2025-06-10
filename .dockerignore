@@ -1,8 +1,6 @@
 node_modules
 npm-debug.log
 build
-.git
-.github
 __tests__
 *.test.js
 *.test.jsx
