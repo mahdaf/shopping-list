@@ -3,7 +3,6 @@ name: Build and Check Code Quality for Staging
 on:
   push:
     branches:
-      - main
       - staging
     
 jobs:
