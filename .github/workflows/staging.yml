@@ -24,6 +24,23 @@ jobs:
             -Dsonar.projectKey=${{ secrets.SONAR_PK }}
             -Dsonar.python.coverage.reportPaths=coverage.xml
 
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm run test
+    
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -43,7 +60,7 @@ jobs:
 
   build-and-push:
     runs-on: ubuntu-latest
-    needs: [SonarCloud, lint]
+    needs: [SonarCloud, test, lint]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3

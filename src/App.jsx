@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
+import { render, screen } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
 
 // customs hooks
 import useFirestoreCollection from './hooks/useFirestoreCollection';
@@ -137,3 +139,17 @@ function App() {
 }
 
 export default App;
+
+if (process.env.NODE_ENV === 'test') {
+  describe('App Component', () => {
+    it('renders without crashing', () => {
+      render(
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      );
+      const heading = screen.getByRole('heading', { name: /Daftar Belanja/i });
+      expect(heading).toBeInTheDocument();
+    });
+  });
+}

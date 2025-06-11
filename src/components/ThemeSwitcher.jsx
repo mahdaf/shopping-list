@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { render, screen, fireEvent } from '@testing-library/react';
 
 // Icons
 import { XMarkIcon, SunIcon, MoonIcon, SwatchIcon } from "@heroicons/react/24/outline";
