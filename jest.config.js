@@ -30,7 +30,5 @@ export default {
     'src/setupTests.js',
     'src/components/EditForm.jsx',
     'src/components/CustomForm.jsx'
-    // 'src/register.jsx',
-    // 'src/login.jsx'
   ]
 };
