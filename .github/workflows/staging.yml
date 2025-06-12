@@ -43,6 +43,10 @@ jobs:
 
       - name: Run ESLint
         run: npx eslint . --ext .js,.jsx
+      
+      - name: Run Unit Test
+        run: npm test
+        
 
   build-and-push:
     name: Docker Build and Push
