@@ -1,15 +1,42 @@
 import { useState, useEffect, useRef } from 'react';
-import { auth } from '../firebase';
+import { auth } from '../../firebase';
 import { useNavigate } from 'react-router-dom';
+import { render, screen } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
 
 // customs hooks
-import useFirestoreCollection from './hooks/useFirestoreCollection';
+import useFirestoreCollection from '../hooks/useFirestoreCollection';
 
 // custom components
-import CustomForm from './components/CustomForm';
-import EditForm from './components/EditForm';
-import TaskList from './components/TaskList';
-import ThemeSwitcher from './components/ThemeSwitcher';
+import CustomForm from '../components/CustomForm';
+import EditForm from '../components/EditForm';
+import TaskList from '../components/TaskList';
+import ThemeSwitcher from '../components/ThemeSwitcher';
+
+// Mock firebase
+jest.mock('../../firebase', () => ({
+  auth: {
+    onAuthStateChanged: jest.fn(),
+    signOut: jest.fn(),
+    currentUser: {
+      uid: 'test-uid',
+      email: 'test@example.com'
+    }
+  }
+}));
+
+// Mock useFirestoreCollection
+jest.mock('../hooks/useFirestoreCollection', () => ({
+  __esModule: true,
+  default: () => ({
+    items: [],
+    loading: false,
+    error: null,
+    addItem: jest.fn(),
+    updateItem: jest.fn(),
+    deleteItem: jest.fn()
+  })
+}));
 
 function App() {
   const navigate = useNavigate();
@@ -90,7 +117,7 @@ function App() {
   };
 
   return (
-    <div className="container">
+    <div className="container" role="main">
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h1>Daftar Belanja {userName}</h1>
         <button className="btn" onClick={handleLogout}>
@@ -137,3 +164,23 @@ function App() {
 }
 
 export default App;
+
+describe('App Component', () => {
+  it('renders without crashing', () => {
+    render(
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    );
+    expect(document.body).toBeTruthy();
+  });
+
+  it('renders main content', () => {
+    render(
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    );
+    expect(screen.getByRole('main')).toBeInTheDocument();
+  });
+});

@@ -27,4 +27,4 @@ jest.mock('../firebase', () => ({
   db: {
     collection: jest.fn(),
   },
-})); 
+}));
