@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import { auth } from "../firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useNavigate, Link } from "react-router-dom";
-import { render, screen } from "@testing-library/react";
-import { BrowserRouter } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -60,16 +58,3 @@ const Login = () => {
 };
 
 export default Login;
-
-if (process.env.NODE_ENV === 'test') {
-  describe('Login Component', () => {
-    it('renders without crashing', () => {
-      render(
-        <BrowserRouter>
-          <Login />
-        </BrowserRouter>
-      );
-      expect(screen.getByRole('heading', { name: /Login/i })).toBeInTheDocument();
-    });
-  });
-}

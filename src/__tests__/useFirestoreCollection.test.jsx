@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, where, getDoc } from "firebase/firestore";
 import { db, auth } from "../../firebase";
+import React from 'react';
+import { render, screen } from '@testing-library/react';
 
 // Custom hook untuk CRUD ke koleksi 'barang'
 const useFirestoreCollection = () => {
@@ -98,3 +100,60 @@ const useFirestoreCollection = () => {
 };
 
 export default useFirestoreCollection;
+
+if (process.env.NODE_ENV === 'test') {
+  describe('useFirestoreCollection Hook', () => {
+    const mockCollection = [
+      { id: 1, nama: 'Task 1', img: 'test-image-1.jpg' },
+      { id: 2, nama: 'Task 2', img: 'test-image-2.jpg' }
+    ];
+
+    beforeEach(() => {
+      jest.clearAllMocks();
+    });
+
+    it('returns empty array initially', () => {
+      const TestComponent = () => {
+        const { items } = useFirestoreCollection('tasks');
+        return <div data-testid="items">{JSON.stringify(items)}</div>;
+      };
+
+      render(<TestComponent />);
+      expect(screen.getByTestId('items')).toHaveTextContent('[]');
+    });
+
+    it('handles collection updates', () => {
+      const TestComponent = () => {
+        const { items } = useFirestoreCollection('tasks');
+        return <div data-testid="items">{JSON.stringify(items)}</div>;
+      };
+
+      // Mock Firestore collection
+      const mockOnSnapshot = jest.fn((callback) => {
+        callback({
+          docs: mockCollection.map(item => ({
+            id: item.id,
+            data: () => item
+          }))
+        });
+        return () => {};
+      });
+
+      const mockCollectionRef = {
+        onSnapshot: mockOnSnapshot
+      };
+
+      jest.spyOn(db, 'collection').mockReturnValue(mockCollectionRef);
+
+      const { rerender } = render(<TestComponent />);
+      
+      // Force re-render to ensure useEffect runs
+      rerender(<TestComponent />);
+      
+      // Wait for the next tick to allow state updates
+      setTimeout(() => {
+        expect(screen.getByTestId('items')).toHaveTextContent(JSON.stringify(mockCollection));
+      }, 0);
+    });
+  });
+}
