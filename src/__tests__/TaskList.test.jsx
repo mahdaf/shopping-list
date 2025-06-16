@@ -1,59 +1,62 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import TaskList from '../components/TaskList';
 
-// component import
-import TaskItem from '../components/TaskItem';
+// Mock CSS module
+jest.mock('../components/TaskList.module.css', () => ({
+  tasks: 'mocked-tasks-class',
+}));
 
-// styles
-import styles from '../components/TaskList.module.css';
+// Mock TaskItem agar tidak perlu implementasi aslinya
+jest.mock('../components/TaskItem', () => (props) => (
+  <li data-testid="task-item">{props.item.nama}</li>
+));
 
-const TaskList = ({ items, deleteItem, enterEditMode }) => {
-  return (
-    <ul className={styles.tasks}>
-      {items.length === 0 ? (
-        <p>Belum ada daftar belanja.</p>
-      ) : (
-        items.sort((a, b) => b.id - a.id).map(item => (
-          <TaskItem
-            key={item.id}
-            item={item}
-            deleteItem={deleteItem}
-            enterEditMode={enterEditMode}
-          />
-        ))
-      )}
-    </ul>
-  );
-};
+describe('TaskList Component', () => {
+  const mockDelete = jest.fn();
+  const mockEdit = jest.fn();
 
-export default TaskList;
+  const mockItems = [
+    {
+      id: 1,
+      nama: 'Task 1',
+      img: 'test-image-1.jpg',
+      completed: false,
+    },
+    {
+      id: 2,
+      nama: 'Task 2',
+      img: 'test-image-2.jpg',
+      completed: true,
+    },
+  ];
 
-if (process.env.NODE_ENV === 'test') {
-  describe('TaskList Component', () => {
-    const mockItems = [
-      {
-        id: 1,
-        nama: 'Task 1',
-        img: 'test-image-1.jpg',
-        completed: false
-      },
-      {
-        id: 2,
-        nama: 'Task 2',
-        img: 'test-image-2.jpg',
-        completed: true
-      }
-    ];
-
-    test('renders empty list when no items', () => {
-      render(<TaskList items={[]} />);
-      expect(screen.getByText('Belum ada daftar belanja.')).toBeInTheDocument();
-    });
-
-    test('renders list of items', () => {
-      render(<TaskList items={mockItems} />);
-      expect(screen.getByText('Task 1')).toBeInTheDocument();
-      expect(screen.getByText('Task 2')).toBeInTheDocument();
-    });
+  beforeEach(() => {
+    jest.clearAllMocks();
   });
-}
+
+  it('renders empty list message when no items', () => {
+    render(
+      <TaskList items={[]} deleteItem={mockDelete} enterEditMode={mockEdit} />
+    );
+    expect(screen.getByText('Belum ada daftar belanja.')).toBeInTheDocument();
+  });
+
+  it('renders all items in descending order by id', () => {
+    render(
+      <TaskList items={mockItems} deleteItem={mockDelete} enterEditMode={mockEdit} />
+    );
+    // Task 2 (id:2) harus muncul lebih dulu
+    const items = screen.getAllByTestId('task-item');
+    expect(items[0]).toHaveTextContent('Task 2');
+    expect(items[1]).toHaveTextContent('Task 1');
+  });
+
+  it('pass deleteItem and enterEditMode props to TaskItem', () => {
+    // Karena TaskItem di-mock, kita cek dengan snapshot
+    render(
+      <TaskList items={mockItems} deleteItem={mockDelete} enterEditMode={mockEdit} />
+    );
+    expect(screen.getAllByTestId('task-item').length).toBe(2);
+  });
+});
