@@ -1,3 +1,5 @@
+// src/main.jsx
+
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
@@ -26,9 +28,8 @@ const Root = () => {
   return (
     <BrowserRouter>
       <Routes>
-+       {/* Tambahan route /beranda yang juga merender App.jsx */}
         <Route path="/" element={<ProtectedRoute><App /></ProtectedRoute>} />
-+       <Route path="/beranda" element={<ProtectedRoute><App /></ProtectedRoute>} />
+        <Route path="/beranda" element={<ProtectedRoute><App /></ProtectedRoute>} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="*" element={<Navigate to="/" replace />} />
@@ -37,8 +38,17 @@ const Root = () => {
   );
 };
 
-ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <Root />
-  </React.StrictMode>
-);
+// ⛔ Jangan render saat environment test
+if (process.env.NODE_ENV !== 'test') {
+  const rootElement = document.getElementById("root");
+  if (rootElement) {
+    ReactDOM.createRoot(rootElement).render(
+      <React.StrictMode>
+        <Root />
+      </React.StrictMode>
+    );
+  }
+}
+
+// ✅ Export untuk coverage
+export { Root, ProtectedRoute };

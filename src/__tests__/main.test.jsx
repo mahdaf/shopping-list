@@ -1,82 +1,105 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { render, screen, act } from "@testing-library/react";
+import { BrowserRouter } from "react-router-dom";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Login from "../login";
-import Register from "../register";
-import { auth } from "../../firebase";
-import "./index.css";
-import { act } from "react-dom/test-utils";
-import { render } from '@testing-library/react';
-import App from '../App';
+import App from "../App";
+import { Root, ProtectedRoute } from "../main";
 
-const ProtectedRoute = ({ children }) => {
-  const [user, setUser] = useState(undefined);
+// ✅ Mock auth untuk default test user ada
+jest.mock("../../firebase", () => ({
+  auth: {
+    onAuthStateChanged: jest.fn((callback) => {
+      callback({ uid: "123", email: "user@example.com" });
+      return jest.fn(); // unsubscribe
+    }),
+  },
+}));
 
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((u) => {
-      setUser(u);
-    });
-    return unsubscribe;
-  }, []);
+// ✅ Mock login & register
+jest.mock("../login", () => () => <div>Login Page</div>);
+jest.mock("../register", () => () => <div>Register Page</div>);
 
-  if (user === undefined) return <p>Loading...</p>;
-  if (!user) return <Navigate to="/login" replace />;
-  return children;
-};
+describe("Root Component", () => {
+  it("renders into root element without crashing", async () => {
+    const root = document.createElement("div");
+    root.id = "root";
+    document.body.appendChild(root);
 
-const Root = () => {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<ProtectedRoute><App /></ProtectedRoute>} />
-        <Route path="/beranda" element={<ProtectedRoute><App /></ProtectedRoute>} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-    </BrowserRouter>
-  );
-};
-
-// Hanya render ke DOM jika tidak dalam environment test
-if (process.env.NODE_ENV !== 'test') {
-  ReactDOM.createRoot(document.getElementById("root")).render(
-    <React.StrictMode>
-      <Root />
-    </React.StrictMode>
-  );
-}
-
-// Test suite
-if (process.env.NODE_ENV === 'test') {
-  describe('Root Component', () => {
-    it('renders without crashing', async () => {
-      const root = document.createElement('div');
-      root.id = 'root';
-      document.body.appendChild(root);
-      
-      await act(async () => {
-        ReactDOM.createRoot(root).render(
-          <React.StrictMode>
-            <Root />
-          </React.StrictMode>
-        );
-      });
-      
-      document.body.removeChild(root);
-    });
-  });
-
-  describe('Main Entry Point', () => {
-    it('renders without crashing', () => {
-      const { container } = render(
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
+    await act(async () => {
+      ReactDOM.createRoot(root).render(
+        <React.StrictMode>
+          <Root />
+        </React.StrictMode>
       );
-      expect(container).toBeTruthy();
     });
-  });
-}
 
-export { Root, ProtectedRoute };
+    expect(document.body.contains(root)).toBe(true);
+
+    document.body.removeChild(root);
+  });
+});
+
+describe("ProtectedRoute - renders when user exists", () => {
+  it("renders children", () => {
+    render(
+      <BrowserRouter>
+        <ProtectedRoute>
+          <div>Protected Content</div>
+        </ProtectedRoute>
+      </BrowserRouter>
+    );
+    expect(screen.getByText("Protected Content")).toBeInTheDocument();
+  });
+});
+
+describe("ProtectedRoute - loading state", () => {
+  it("shows loading when user is undefined", async () => {
+    jest.resetModules();
+    jest.doMock("../../firebase", () => ({
+      auth: {
+        onAuthStateChanged: jest.fn((callback) => {
+          callback(undefined); // simulate loading
+          return jest.fn();
+        }),
+      },
+    }));
+
+    const { ProtectedRoute } = await import("../main");
+    render(<ProtectedRoute><div>Content</div></ProtectedRoute>);
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
+  });
+});
+describe("ProtectedRoute - redirect saat user null (belum login)", () => {
+  it("redirects to /login jika user null", async () => {
+    // Reset module dan mock ulang
+    jest.resetModules();
+    jest.doMock("../../firebase", () => ({
+      auth: {
+        onAuthStateChanged: jest.fn((callback) => {
+          callback(null); // Simulasi user belum login
+          return jest.fn();
+        }),
+      },
+    }));
+
+    // Import ulang ProtectedRoute dari main (karena sudah dimock)
+    const { ProtectedRoute } = await import("../main");
+
+    // Render dengan BrowserRouter (karena Navigate butuh router context)
+    render(
+      <BrowserRouter>
+        <ProtectedRoute>
+          <div>Ini Konten Rahasia</div>
+        </ProtectedRoute>
+      </BrowserRouter>
+    );
+
+    // Cek: anaknya tidak tampil (karena user null)
+    expect(screen.queryByText("Ini Konten Rahasia")).not.toBeInTheDocument();
+
+    // Cek: harus terjadi redirect ke /login
+    // Kamu bisa cek ada element tertentu (misal, Login Page jika mock login seperti di test kamu)
+    // Jadi, karena login di-mock jadi <div>Login Page</div>
+    expect(screen.getByText("Login Page")).toBeInTheDocument();
+  });
+});

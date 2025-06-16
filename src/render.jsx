@@ -2,8 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { Root } from "./main";
 
-const container = document.getElementById("root");
-ReactDOM.createRoot(container).render(
+ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Root />
   </React.StrictMode>

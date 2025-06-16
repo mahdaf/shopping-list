@@ -1,186 +1,142 @@
-import { useState, useEffect, useRef } from 'react';
-import { auth } from '../../firebase';
-import { useNavigate } from 'react-router-dom';
-import { render, screen } from '@testing-library/react';
-import { BrowserRouter } from 'react-router-dom';
 
-// customs hooks
-import useFirestoreCollection from '../hooks/useFirestoreCollection';
+import React from "react";
+import { render, screen, fireEvent } from "@testing-library/react";
+import App from "../App";
+import { BrowserRouter } from "react-router-dom";
 
-// custom components
-import CustomForm from '../components/CustomForm';
-import EditForm from '../components/EditForm';
-import TaskList from '../components/TaskList';
-import ThemeSwitcher from '../components/ThemeSwitcher';
-
-// Mock firebase
-jest.mock('../../firebase', () => ({
+// Mock Firebase
+jest.mock("../../firebase", () => ({
   auth: {
-    onAuthStateChanged: jest.fn(),
-    signOut: jest.fn(),
     currentUser: {
-      uid: 'test-uid',
-      email: 'test@example.com'
-    }
-  }
+      uid: "test-uid",
+      email: "test@example.com",
+    },
+    signOut: jest.fn(() => Promise.resolve()),
+  },
 }));
 
-// Mock useFirestoreCollection
-jest.mock('../hooks/useFirestoreCollection', () => ({
-  __esModule: true,
-  default: () => ({
-    items: [],
-    loading: false,
-    error: null,
-    addItem: jest.fn(),
-    updateItem: jest.fn(),
-    deleteItem: jest.fn()
-  })
-}));
+// Global storage for test state
+let appState = {
+  loading: false,
+  error: null,
+};
 
-function App() {
-  const navigate = useNavigate();
-  const { items, loading, error, addItem, updateItem, deleteItem } = useFirestoreCollection();
-  const [editedItem, setEditedItem] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const idleTimer = useRef(null);
-
-  const user = auth.currentUser;
-  const userNameRaw = user && user.email ? user.email.split('@')[0] : "User";
-  const userName = userNameRaw.charAt(0).toUpperCase() + userNameRaw.slice(1);
-
-
-  useEffect(() => {
-    const logoutUser = () => {
-      alert("Anda telah logout karena tidak ada aktivitas selama 1 menit.");
-      auth.signOut().then(() => {
-        navigate("/login");
-      });
-    };
-
-    const resetTimer = () => {
-      if (idleTimer.current) clearTimeout(idleTimer.current);
-      idleTimer.current = setTimeout(logoutUser, 600 * 1000); // 1 menit
-    };
-
-    const events = ["mousemove", "keydown", "click", "scroll", "touchstart"];
-    events.forEach(event => window.addEventListener(event, resetTimer));
-    resetTimer(); // inisialisasi timer
-
-    return () => {
-      events.forEach(event => window.removeEventListener(event, resetTimer));
-      clearTimeout(idleTimer.current);
-    };
-  }, [navigate]);
-
-  const handleAddItem = (item) => {
-    if (!item.nama || !item.harga || !item.jumlah) {
-      alert("Semua field harus diisi!");
-      return;
-    }
-    addItem({ ...item });
+// Dynamic mock useFirestoreCollection
+jest.mock("../hooks/useFirestoreCollection", () => {
+  const addItem = jest.fn();
+  const updateItem = jest.fn();
+  const deleteItem = jest.fn();
+  return {
+    __esModule: true,
+    default: () => ({
+      items: [
+        { id: "1", nama: "Sabun", harga: 3000, jumlah: 2, isPurchased: false },
+      ],
+      loading: appState.loading,
+      error: appState.error,
+      addItem,
+      updateItem,
+      deleteItem,
+    }),
   };
+});
 
-  const handleUpdateItem = (item) => {
-    updateItem({ ...item });
-    setIsEditing(false);
-    setEditedItem(null);
-  };
+// Mock CustomForm
+jest.mock("../components/CustomForm", () => ({ addItem }) => {
+  return <button onClick={() => addItem({ nama: "Sabun", harga: 3000, jumlah: 2 })}>Add Item</button>;
+});
 
-  const handleDeleteItem = (id) => {
-    deleteItem(id);
-  };
+// Mock EditForm
+jest.mock("../components/EditForm", () => ({ editedTask, updateTask, closeEditMode }) => (
+  <div>
+    <p>Edit Mode: {editedTask?.nama}</p>
+    <button onClick={() => updateTask({ ...editedTask, nama: "Updated" })}>Save</button>
+    <button onClick={closeEditMode}>Close</button>
+  </div>
+));
 
-  const handleTogglePurchased = (id) => {
-    const item = items.find(i => i.id === id);
-    if (item) {
-      updateItem({ ...item, isPurchased: !item.isPurchased });
-    }
-  };
-
-  const enterEditMode = (item) => {
-    setEditedItem(item);
-    setIsEditing(true);
-  };
-
-  const filteredItems = items.filter(item =>
-    item.nama && item.nama.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const handleLogout = () => {
-    if (window.confirm("Apakah Anda yakin ingin logout?")) {
-      auth.signOut().then(() => {
-        navigate("/login");
-      });
-    }
-  };
-
-  return (
-    <div className="container" role="main">
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1>Daftar Belanja {userName}</h1>
-        <button className="btn" onClick={handleLogout}>
-          Logout
-        </button>
-      </header>
-
-      {isEditing && (
-        <EditForm
-          editedTask={editedItem}
-          updateTask={handleUpdateItem}
-          closeEditMode={() => setIsEditing(false)}
-        />
-      )}
-
-      <CustomForm addItem={handleAddItem} />
-
-      <div className="search-wrapper">
-        <input
-          type="text"
-          className="search-input"
-          placeholder="Cari nama barang..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+// Mock TaskList
+jest.mock("../components/TaskList", () => ({ items, deleteItem, enterEditMode, togglePurchased }) => (
+  <div>
+    {items.map((item) => (
+      <div key={item.id}>
+        <p>{item.nama}</p>
+        <button onClick={() => deleteItem(item.id)}>Delete</button>
+        <button onClick={() => enterEditMode(item)}>Edit</button>
+        <button onClick={() => togglePurchased(item.id)}>Toggle</button>
       </div>
+    ))}
+  </div>
+));
 
-      {loading ? (
-        <p>Loading...</p>
-      ) : error ? (
-        <p style={{ color: 'red' }}>{error}</p>
-      ) : (
-        <TaskList
-          items={filteredItems}
-          deleteItem={handleDeleteItem}
-          enterEditMode={enterEditMode}
-          togglePurchased={handleTogglePurchased}
-        />
-      )}
+// Mock ThemeSwitcher
+jest.mock("../components/ThemeSwitcher", () => () => <div>Theme Switch</div>);
 
-      <ThemeSwitcher />
-    </div>
-  );
-}
-
-export default App;
-
-describe('App Component', () => {
-  it('renders without crashing', () => {
+describe("App Component", () => {
+  const renderApp = () =>
     render(
       <BrowserRouter>
         <App />
       </BrowserRouter>
     );
-    expect(document.body).toBeTruthy();
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    appState.loading = false;
+    appState.error = null;
   });
 
-  it('renders main content', () => {
-    render(
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    );
-    expect(screen.getByRole('main')).toBeInTheDocument();
+  it("renders content", () => {
+    renderApp();
+    expect(screen.getByText(/Daftar Belanja/i)).toBeInTheDocument();
+    expect(screen.getByText("Sabun")).toBeInTheDocument();
+  });
+
+  it("handles addItem", () => {
+    renderApp();
+    fireEvent.click(screen.getByText("Add Item"));
+  });
+
+  it("handles deleteItem", () => {
+    renderApp();
+    fireEvent.click(screen.getByText("Delete"));
+  });
+
+  it("handles edit and updateItem", () => {
+    renderApp();
+    fireEvent.click(screen.getByText("Edit"));
+    fireEvent.click(screen.getByText("Save"));
+  });
+
+  it("handles togglePurchased", () => {
+    renderApp();
+    fireEvent.click(screen.getByText("Toggle"));
+  });
+
+  it("filters search input", () => {
+    renderApp();
+    fireEvent.change(screen.getByPlaceholderText(/Cari nama/i), {
+      target: { value: "sab" },
+    });
+    expect(screen.getByText("Sabun")).toBeInTheDocument();
+  });
+
+  it("handles logout confirmation", () => {
+    window.confirm = jest.fn(() => true);
+    renderApp();
+    fireEvent.click(screen.getByText("Logout"));
+    expect(window.confirm).toHaveBeenCalled();
+  });
+
+  it("shows loading state", () => {
+    appState.loading = true;
+    renderApp();
+    expect(screen.getByText("Loading...")).toBeInTheDocument();
+  });
+
+  it("shows error state", () => {
+    appState.error = "Something went wrong";
+    renderApp();
+    expect(screen.getByText("Something went wrong")).toBeInTheDocument();
   });
 });
