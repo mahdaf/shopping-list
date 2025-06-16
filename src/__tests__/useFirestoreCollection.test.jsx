@@ -2,146 +2,102 @@ import { useEffect, useState } from "react";
 import { collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot, query, where, getDoc } from "firebase/firestore";
 import { db, auth } from "../../firebase";
 import React from 'react';
-import { render, screen, waitFor } from "@testing-library/react";
-import useFirestoreCollection from "../hooks/useFirestoreCollection";
-import * as firestore from "firebase/firestore";
-
-// Mock firebase/firestore
-jest.mock("firebase/firestore", () => ({
-  collection: jest.fn(),
-  addDoc: jest.fn(),
-  updateDoc: jest.fn(),
-  deleteDoc: jest.fn(),
-  doc: jest.fn(),
-  onSnapshot: jest.fn((...args) => {
-    // args[1] adalah callback sukses
-    if (typeof args[1] === "function") {
-      args[1]({
-        docs: [
-          {
-            id: "1",
-            data: () => ({
-              nama: "Barang 1",
-              harga: 1000,
-              jumlah: 2,
-              img: "img",
-              uid: "test-uid"
-            })
-          }
-        ]
-      });
-    }
-    return () => {}; // <--- ini penting!
-  }),
-  query: jest.fn(),
-  where: jest.fn(),
-  getDoc: jest.fn(),
-}));
-
-// Mock auth
-jest.mock("../../firebase", () => ({
-  auth: {
-    currentUser: { uid: "test-uid", email: "test@example.com" },
-  },
-  db: {
-    collection: jest.fn(),
-  },
-}));
+import { render, screen } from '@testing-library/react';
 
 // Custom hook untuk CRUD ke koleksi 'barang'
-// const useFirestoreColle ction = () => {
-//   const [items, setItems] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
+const useFirestoreCollection = () => {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-//   useEffect(() => {
-//     if (!auth.currentUser) {
-//       setItems([]);
-//       setLoading(false);
-//       return;
-//     }
-//     // Query hanya data milik user login
-//     const q = query(
-//       collection(db, "barang"),
-//       where("uid", "==", auth.currentUser.uid)
-//     );
-//     const unsubscribe = onSnapshot(
-//       q,
-//       (snapshot) => {
-//         const data = snapshot.docs.map(doc => ({
-//           id: doc.id,
-//           harga: doc.data().harga,
-//           img: doc.data().img,
-//           jumlah: doc.data().jumlah,
-//           nama: doc.data().nama
-//         }));
-//         setItems(data);
-//         setLoading(false);
-//       },
-//       (err) => {
-//         setError(err.message);
-//         setLoading(false);
-//       }
-//     );
-//     return () => unsubscribe();
-//   }, []);
+  useEffect(() => {
+    if (!auth.currentUser) {
+      setItems([]);
+      setLoading(false);
+      return;
+    }
+    // Query hanya data milik user login
+    const q = query(
+      collection(db, "barang"),
+      where("uid", "==", auth.currentUser.uid)
+    );
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const data = snapshot.docs.map(doc => ({
+          id: doc.id,
+          harga: doc.data().harga,
+          img: doc.data().img,
+          jumlah: doc.data().jumlah,
+          nama: doc.data().nama
+        }));
+        setItems(data);
+        setLoading(false);
+      },
+      (err) => {
+        setError(err.message);
+        setLoading(false);
+      }
+    );
+    return () => unsubscribe();
+  }, []);
 
-//   // CREATE
-//   const addItem = async (item) => {
-//     try {
-//       await addDoc(collection(db, "barang"), {
-//         harga: item.harga,
-//         img: item.img,
-//         jumlah: item.jumlah,
-//         nama: item.nama,
-//         uid: auth.currentUser?.uid // simpan UID user
-//       });
-//     } catch (err) {
-//       setError(err.message);
-//     }
-//   };
+  // CREATE
+  const addItem = async (item) => {
+    try {
+      await addDoc(collection(db, "barang"), {
+        harga: item.harga,
+        img: item.img,
+        jumlah: item.jumlah,
+        nama: item.nama,
+        uid: auth.currentUser?.uid // simpan UID user
+      });
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
-//   // UPDATE
-//   const updateItem = async (item) => {
-//     try {
-//       const itemRef = doc(db, "barang", item.id);
-//       // Ambil data barang dulu
-//       const itemSnap = await getDoc(itemRef); 
-//       if (!itemSnap.exists()) throw new Error("Data tidak ditemukan");
-//       const data = itemSnap.data();
-//       if (data.uid !== auth.currentUser?.uid) {
-//         throw new Error("Anda tidak berhak mengubah data ini.");
-//       }
-//       await updateDoc(itemRef, {
-//         harga: item.harga,
-//         img: item.img,
-//         jumlah: item.jumlah,
-//         nama: item.nama
-//       });
-//     } catch (err) {
-//       setError(err.message);
-//     }
-//   };
+  // UPDATE
+  const updateItem = async (item) => {
+    try {
+      const itemRef = doc(db, "barang", item.id);
+      // Ambil data barang dulu
+      const itemSnap = await getDoc(itemRef); 
+      if (!itemSnap.exists()) throw new Error("Data tidak ditemukan");
+      const data = itemSnap.data();
+      if (data.uid !== auth.currentUser?.uid) {
+        throw new Error("Anda tidak berhak mengubah data ini.");
+      }
+      await updateDoc(itemRef, {
+        harga: item.harga,
+        img: item.img,
+        jumlah: item.jumlah,
+        nama: item.nama
+      });
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
-//   // DELETE
-//   const deleteItem = async (id) => {
-//     try {
-//       const itemRef = doc(db, "barang", id);
-//       // Ambil data barang dulu
-//       const itemSnap = await getDoc(itemRef); 
-//       if (!itemSnap.exists()) throw new Error("Data tidak ditemukan");
-//       const data = itemSnap.data();
-//       if (data.uid !== auth.currentUser?.uid) {
-//         throw new Error("Anda tidak berhak menghapus data ini.");
-//       }
-//       await deleteDoc(itemRef);
-//     } catch (err) {
-//       setError(err.message);
-//     }
-//   };
+  // DELETE
+  const deleteItem = async (id) => {
+    try {
+      const itemRef = doc(db, "barang", id);
+      // Ambil data barang dulu
+      const itemSnap = await getDoc(itemRef); 
+      if (!itemSnap.exists()) throw new Error("Data tidak ditemukan");
+      const data = itemSnap.data();
+      if (data.uid !== auth.currentUser?.uid) {
+        throw new Error("Anda tidak berhak menghapus data ini.");
+      }
+      await deleteDoc(itemRef);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
-//   return { items, loading, error, addItem, updateItem, deleteItem };
-// };
+  return { items, loading, error, addItem, updateItem, deleteItem };
+};
 
 export default useFirestoreCollection;
 
