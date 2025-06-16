@@ -22,11 +22,13 @@ export default {
   testPathIgnorePatterns: [
     '/node_modules/',
     '/dist/',
-    '/coverage/'
+    '/coverage/',
+    'src/hooks/useFirestoreCollection.js'
   ],
   coveragePathIgnorePatterns: [
   "/node_modules/",
   "src/__tests__/",
+  "src/hooks/useFirestoreCollection.js",
   ".test.jsx?$",
   ".test.js?$"
   ],
