@@ -1,18 +1,21 @@
-import React from "react";
 import * as ReactDOMClient from "react-dom/client";
 
-jest.mock("react-dom/client", () => ({
-  createRoot: jest.fn().mockReturnValue({
-    render: jest.fn(),
-  }),
-}));
+// Mock createRoot dan render agar tidak benar-benar mounting ke DOM asli
+const mockRender = jest.fn();
+jest.spyOn(ReactDOMClient, "createRoot").mockReturnValue({
+  render: mockRender,
+});
 
-describe("index.jsx", () => {
+describe("render.jsx", () => {
   it("calls ReactDOM.createRoot and renders Root", async () => {
+    // Siapkan root element di document
     document.body.innerHTML = '<div id="root"></div>';
-    await import("../index");
+    
+    // Import langsung render.jsx untuk memicu eksekusi kode mounting
+    await import("../render"); // Import sesuai path file render.jsx
 
-    expect(ReactDOMClient.createRoot).toHaveBeenCalled();
-    expect(ReactDOMClient.createRoot().render).toHaveBeenCalled();
+    // Cek bahwa createRoot dan render dipanggil
+    expect(ReactDOMClient.createRoot).toHaveBeenCalledWith(document.getElementById("root"));
+    expect(mockRender).toHaveBeenCalled();
   });
 });

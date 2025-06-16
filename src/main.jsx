@@ -38,7 +38,7 @@ const Root = () => {
   );
 };
 
-// ⛔ Jangan render saat environment test
+// istanbul ignore next
 if (process.env.NODE_ENV !== 'test') {
   const rootElement = document.getElementById("root");
   if (rootElement) {

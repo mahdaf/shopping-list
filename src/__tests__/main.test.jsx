@@ -2,20 +2,19 @@ import React from "react";
 import { render, screen, act } from "@testing-library/react";
 import { BrowserRouter } from "react-router-dom";
 import ReactDOM from "react-dom/client";
-import App from "../App";
 import { Root, ProtectedRoute } from "../main";
 
-// ✅ Mock auth untuk default test user ada
+//Mock auth untuk default test user ada
 jest.mock("../../firebase", () => ({
   auth: {
     onAuthStateChanged: jest.fn((callback) => {
-      callback({ uid: "123", email: "user@example.com" });
+      callback({ uid: "KPbulMZyMDbUhE17nXgIVlLhAd13", email: "test@gmail.com" });
       return jest.fn(); // unsubscribe
     }),
   },
 }));
 
-// ✅ Mock login & register
+//Mock login & register
 jest.mock("../login", () => () => <div>Login Page</div>);
 jest.mock("../register", () => () => <div>Register Page</div>);
 

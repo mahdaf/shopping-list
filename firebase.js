@@ -14,8 +14,8 @@ if (process.env.NODE_ENV === 'test') {
     onAuthStateChanged: jest.fn(),
     signOut: jest.fn(),
     currentUser: {
-      uid: 'test-uid',
-      email: 'test@example.com'
+      uid: 'KPbulMZyMDbUhE17nXgIVlLhAd13',
+      email: 'test@gmail.com'
     }
   };
 
