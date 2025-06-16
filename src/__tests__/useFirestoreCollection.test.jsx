@@ -49,7 +49,7 @@ jest.mock("../../firebase", () => ({
 }));
 
 // Custom hook untuk CRUD ke koleksi 'barang'
-// const useFirestoreCollection = () => {
+// const useFirestoreColle ction = () => {
 //   const [items, setItems] = useState([]);
 //   const [loading, setLoading] = useState(true);
 //   const [error, setError] = useState(null);
