@@ -38,17 +38,11 @@ const Root = () => {
   );
 };
 
-// istanbul ignore next
-if (process.env.NODE_ENV !== 'test') {
-  const rootElement = document.getElementById("root");
-  if (rootElement) {
-    ReactDOM.createRoot(rootElement).render(
-      <React.StrictMode>
-        <Root />
-      </React.StrictMode>
-    );
-  }
-}
-
-// ✅ Export untuk coverage
+// Export untuk coverage
 export { Root, ProtectedRoute };
+
+// Render aplikasi ke DOM hanya jika elemen root ada
+const rootElement = document.getElementById("root");
+if (rootElement) {
+  ReactDOM.createRoot(rootElement).render(<Root />);
+}

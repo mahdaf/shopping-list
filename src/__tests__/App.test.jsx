@@ -18,6 +18,11 @@ jest.mock("../../firebase", () => ({
 let appState = {
   loading: false,
   error: null,
+  items: [
+    { id: "1", nama: "Sabun", harga: 3000, jumlah: 2, isPurchased: false },
+    { id: "2", nama: "Sampo", harga: 15000, jumlah: 1, isPurchased: true },
+    { id: "3", nama: "Pasta Gigi", harga: 8000, jumlah: 3, isPurchased: false },
+  ],
 };
 
 // Dynamic mock useFirestoreCollection
@@ -28,9 +33,7 @@ jest.mock("../hooks/useFirestoreCollection", () => {
   return {
     __esModule: true,
     default: () => ({
-      items: [
-        { id: "1", nama: "Sabun", harga: 3000, jumlah: 2, isPurchased: false },
-      ],
+      items: appState.items,
       loading: appState.loading,
       error: appState.error,
       addItem,
@@ -42,7 +45,13 @@ jest.mock("../hooks/useFirestoreCollection", () => {
 
 // Mock CustomForm
 jest.mock("../components/CustomForm", () => ({ addItem }) => {
-  return <button onClick={() => addItem({ nama: "Sabun", harga: 3000, jumlah: 2 })}>Add Item</button>;
+  return (
+    <div>
+      <button onClick={() => addItem({ nama: "Sabun", harga: 3000, jumlah: 2 })}>Add Valid Item</button>
+      <button onClick={() => addItem({ nama: "", harga: "", jumlah: "" })}>Add Invalid Item</button>
+      <button onClick={() => addItem({ nama: "Test", harga: 1000, jumlah: 1 })}>Add Test Item</button>
+    </div>
+  );
 });
 
 // Mock EditForm
@@ -60,6 +69,8 @@ jest.mock("../components/TaskList", () => ({ items, deleteItem, enterEditMode, t
     {items.map((item) => (
       <div key={item.id}>
         <p>{item.nama}</p>
+        <span>Harga: {item.harga}</span>
+        <span>Jumlah: {item.jumlah}</span>
         <button onClick={() => deleteItem(item.id)}>Delete</button>
         <button onClick={() => enterEditMode(item)}>Edit</button>
         <button onClick={() => togglePurchased(item.id)}>Toggle</button>
@@ -83,6 +94,11 @@ describe("App Component", () => {
     jest.clearAllMocks();
     appState.loading = false;
     appState.error = null;
+    appState.items = [
+      { id: "1", nama: "Sabun", harga: 3000, jumlah: 2, isPurchased: false },
+      { id: "2", nama: "Sampo", harga: 15000, jumlah: 1, isPurchased: true },
+      { id: "3", nama: "Pasta Gigi", harga: 8000, jumlah: 3, isPurchased: false },
+    ];
   });
 
   it("renders content", () => {
@@ -91,25 +107,35 @@ describe("App Component", () => {
     expect(screen.getByText("Sabun")).toBeInTheDocument();
   });
 
-  it("handles addItem", () => {
+  it("handles addItem with valid data", () => {
     renderApp();
-    fireEvent.click(screen.getByText("Add Item"));
+    fireEvent.click(screen.getByText("Add Valid Item"));
+  });
+
+  it("handles addItem with invalid data and shows alert", () => {
+    window.alert = jest.fn();
+    renderApp();
+    fireEvent.click(screen.getByText("Add Invalid Item"));
+    expect(window.alert).toHaveBeenCalledWith("Semua field harus diisi!");
   });
 
   it("handles deleteItem", () => {
     renderApp();
-    fireEvent.click(screen.getByText("Delete"));
+    const deleteButtons = screen.getAllByText("Delete");
+    fireEvent.click(deleteButtons[0]);
   });
 
   it("handles edit and updateItem", () => {
     renderApp();
-    fireEvent.click(screen.getByText("Edit"));
+    const editButtons = screen.getAllByText("Edit");
+    fireEvent.click(editButtons[0]);
     fireEvent.click(screen.getByText("Save"));
   });
 
   it("handles togglePurchased", () => {
     renderApp();
-    fireEvent.click(screen.getByText("Toggle"));
+    const toggleButtons = screen.getAllByText("Toggle");
+    fireEvent.click(toggleButtons[0]);
   });
 
   it("filters search input", () => {
@@ -131,6 +157,17 @@ describe("App Component", () => {
     expect(window.confirm).toHaveBeenCalled();
   });
 
+  it("handles logout cancellation", async () => {
+    window.confirm = jest.fn(() => false);
+    renderApp();
+    
+    await act(async () => {
+      fireEvent.click(screen.getByText("Logout"));
+    });
+    
+    expect(window.confirm).toHaveBeenCalled();
+  });
+
   it("shows loading state", () => {
     appState.loading = true;
     renderApp();
@@ -141,5 +178,106 @@ describe("App Component", () => {
     appState.error = "Something went wrong";
     renderApp();
     expect(screen.getByText("Something went wrong")).toBeInTheDocument();
+  });
+
+  it("displays item count correctly", () => {
+    renderApp();
+    expect(screen.getByText("Menampilkan Total 3 barang belanja")).toBeInTheDocument();
+  });
+
+  it("displays filtered item count when searching", () => {
+    renderApp();
+    fireEvent.change(screen.getByPlaceholderText(/Cari nama/i), {
+      target: { value: "sab" },
+    });
+    expect(screen.getByText("Menampilkan 1 dari 3 barang belanja")).toBeInTheDocument();
+  });
+
+  it("handles sorting by name ascending", () => {
+    renderApp();
+    const sortSelect = screen.getByRole("combobox");
+    fireEvent.change(sortSelect, { target: { value: "nama-asc" } });
+    expect(sortSelect.value).toBe("nama-asc");
+  });
+
+  it("handles sorting by name descending", () => {
+    renderApp();
+    const sortSelect = screen.getByRole("combobox");
+    fireEvent.change(sortSelect, { target: { value: "nama-desc" } });
+    expect(sortSelect.value).toBe("nama-desc");
+  });
+
+  it("handles sorting by price ascending", () => {
+    renderApp();
+    const sortSelect = screen.getByRole("combobox");
+    fireEvent.change(sortSelect, { target: { value: "harga-asc" } });
+    expect(sortSelect.value).toBe("harga-asc");
+  });
+
+  it("handles sorting by price descending", () => {
+    renderApp();
+    const sortSelect = screen.getByRole("combobox");
+    fireEvent.change(sortSelect, { target: { value: "harga-desc" } });
+    expect(sortSelect.value).toBe("harga-desc");
+  });
+
+  it("handles sorting by quantity ascending", () => {
+    renderApp();
+    const sortSelect = screen.getByRole("combobox");
+    fireEvent.change(sortSelect, { target: { value: "jumlah-asc" } });
+    expect(sortSelect.value).toBe("jumlah-asc");
+  });
+
+  it("handles sorting by quantity descending", () => {
+    renderApp();
+    const sortSelect = screen.getByRole("combobox");
+    fireEvent.change(sortSelect, { target: { value: "jumlah-desc" } });
+    expect(sortSelect.value).toBe("jumlah-desc");
+  });
+
+  it("handles default sorting", () => {
+    renderApp();
+    const sortSelect = screen.getByRole("combobox");
+    fireEvent.change(sortSelect, { target: { value: "default" } });
+    expect(sortSelect.value).toBe("default");
+  });
+
+  it("handles user with email", () => {
+    renderApp();
+    expect(screen.getByText(/Daftar Belanja Test/i)).toBeInTheDocument();
+  });
+
+  it("handles search with no results", () => {
+    renderApp();
+    fireEvent.change(screen.getByPlaceholderText(/Cari nama/i), {
+      target: { value: "xyz" },
+    });
+    expect(screen.getByText("Menampilkan 0 dari 3 barang belanja")).toBeInTheDocument();
+  });
+
+  it("handles search with empty query", () => {
+    renderApp();
+    fireEvent.change(screen.getByPlaceholderText(/Cari nama/i), {
+      target: { value: "" },
+    });
+    expect(screen.getByText("Menampilkan Total 3 barang belanja")).toBeInTheDocument();
+  });
+
+  it("handles togglePurchased with item not found", () => {
+    // Mock items with specific ID
+    appState.items = [
+      { id: "1", nama: "Sabun", harga: 3000, jumlah: 2, isPurchased: false },
+    ];
+    
+    renderApp();
+    const toggleButtons = screen.getAllByText("Toggle");
+    fireEvent.click(toggleButtons[0]);
+  });
+
+  it("handles edit mode close", () => {
+    renderApp();
+    const editButtons = screen.getAllByText("Edit");
+    fireEvent.click(editButtons[0]);
+    fireEvent.click(screen.getByText("Close"));
   });
 });

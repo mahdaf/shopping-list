@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
 
@@ -17,35 +17,11 @@ function App() {
   const [editedItem, setEditedItem] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const idleTimer = useRef(null);
+  const [sortOption, setSortOption] = useState('default');
 
   const user = auth.currentUser;
   const userNameRaw = user && user.email ? user.email.split('@')[0] : "User";
   const userName = userNameRaw.charAt(0).toUpperCase() + userNameRaw.slice(1);
-
-
-  useEffect(() => {
-    const logoutUser = () => {
-      alert("Anda telah logout karena tidak ada aktivitas selama 1 menit.");
-      auth.signOut().then(() => {
-        navigate("/login");
-      });
-    };
-
-    const resetTimer = () => {
-      if (idleTimer.current) clearTimeout(idleTimer.current);
-      idleTimer.current = setTimeout(logoutUser, 600 * 1000); // 1 menit
-    };
-
-    const events = ["mousemove", "keydown", "click", "scroll", "touchstart"];
-    events.forEach(event => window.addEventListener(event, resetTimer));
-    resetTimer(); // inisialisasi timer
-
-    return () => {
-      events.forEach(event => window.removeEventListener(event, resetTimer));
-      clearTimeout(idleTimer.current);
-    };
-  }, [navigate]);
 
   const handleAddItem = (item) => {
     if (!item.nama || !item.harga || !item.jumlah) {
@@ -81,6 +57,32 @@ function App() {
     item.nama && item.nama.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Funtion to sort items
+  const sortItems = (itemsToSort) => {
+    return [...itemsToSort].sort((a, b) => {
+      switch (sortOption) {
+        case 'default':
+          return 0; // Tidak mengurutkan
+        case 'nama-asc':
+          return a.nama.localeCompare(b.nama);
+        case 'nama-desc':
+          return b.nama.localeCompare(a.nama);
+        case 'harga-asc':
+          return parseFloat(a.harga) - parseFloat(b.harga);
+        case 'harga-desc':
+          return parseFloat(b.harga) - parseFloat(a.harga);
+        case 'jumlah-asc':
+          return parseInt(a.jumlah) - parseInt(b.jumlah);
+        case 'jumlah-desc':
+          return parseInt(b.jumlah) - parseInt(a.jumlah);
+        default:
+          return 0;
+      }
+    });
+  };
+
+  const sortedAndFilteredItems = sortItems(filteredItems);
+
   const handleLogout = () => {
     if (window.confirm("Apakah Anda yakin ingin logout?")) {
       auth.signOut().then(() => {
@@ -108,14 +110,39 @@ function App() {
 
       <CustomForm addItem={handleAddItem} />
 
-      <div className="search-wrapper">
-        <input
-          type="text"
-          className="search-input"
-          placeholder="Cari nama barang..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-        />
+      <div className="search-sort-wrapper">
+        <div className="item-count">
+          {searchQuery ? 
+            `Menampilkan ${filteredItems.length} dari ${items.length} barang belanja` : 
+            `Menampilkan Total ${items.length} barang belanja`
+          }
+        </div>
+        
+        <div className="sort-wrapper">
+          <select
+            className="sort-select"
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value)}
+          >
+            <option value="default">Default (Urutan Asli)</option>
+            <option value="nama-asc">Nama Barang (A-Z)</option>
+            <option value="nama-desc">Nama Barang (Z-A)</option>
+            <option value="harga-asc">Harga (Termurah)</option>
+            <option value="harga-desc">Harga (Termahal)</option>
+            <option value="jumlah-asc">Jumlah (Sedikit)</option>
+            <option value="jumlah-desc">Jumlah (Banyak)</option>
+          </select>
+        </div>
+        
+        <div className="search-wrapper">
+          <input
+            type="text"
+            className="search-input"
+            placeholder="Cari nama barang..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
       </div>
 
       {loading ? (
@@ -124,7 +151,7 @@ function App() {
         <p style={{ color: 'red' }}>{error}</p>
       ) : (
         <TaskList
-          items={filteredItems}
+          items={sortedAndFilteredItems}
           deleteItem={handleDeleteItem}
           enterEditMode={enterEditMode}
           togglePurchased={handleTogglePurchased}
