@@ -103,7 +103,7 @@ describe("App Component", () => {
 
   it("renders content", () => {
     renderApp();
-    expect(screen.getByText(/Daftar Belanja/i)).toBeInTheDocument();
+    expect(screen.getByText(/Daftar Beli/i)).toBeInTheDocument();
     expect(screen.getByText("Sabun")).toBeInTheDocument();
   });
 
