@@ -12,7 +12,7 @@ describe("CustomForm", () => {
 
   it("renders all input fields", () => {
     render(<CustomForm addItem={addItem} />);
-    expect(screen.getByLabelText(/Item Belanja/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Nama Barang/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Harga Barang/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Jumlah Barang/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Unggah Gambar/i)).toBeInTheDocument();
@@ -20,7 +20,7 @@ describe("CustomForm", () => {
 
   it("can input data and submit, resets after submit", () => {
     render(<CustomForm addItem={addItem} />);
-    fireEvent.change(screen.getByLabelText(/Item Belanja/i), { target: { value: "Roti" } });
+    fireEvent.change(screen.getByLabelText(/Nama Barang/i), { target: { value: "Roti" } });
     fireEvent.change(screen.getByLabelText(/Harga Barang/i), { target: { value: "10000" } });
     fireEvent.change(screen.getByLabelText(/Jumlah Barang/i), { target: { value: "5" } });
 
@@ -34,14 +34,14 @@ describe("CustomForm", () => {
         img: expect.any(String),
       })
     );
-    expect(screen.getByLabelText(/Item Belanja/i)).toHaveValue("");
+    expect(screen.getByLabelText(/Nama Barang/i)).toHaveValue("");
     expect(screen.getByLabelText(/Harga Barang/i)).toHaveValue(null); // input number kosong = null
     expect(screen.getByLabelText(/Jumlah Barang/i)).toHaveValue(null);
   });
 
   it("calls addItem with DEFAULT_IMG if no image uploaded", () => {
     render(<CustomForm addItem={addItem} />);
-    fireEvent.change(screen.getByLabelText(/Item Belanja/i), { target: { value: "Beras" } });
+    fireEvent.change(screen.getByLabelText(/Nama Barang/i), { target: { value: "Beras" } });
     fireEvent.change(screen.getByLabelText(/Harga Barang/i), { target: { value: "15000" } });
     fireEvent.change(screen.getByLabelText(/Jumlah Barang/i), { target: { value: "1" } });
     // tidak upload gambar
