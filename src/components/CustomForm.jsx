@@ -96,9 +96,9 @@ const CustomForm = ({ addItem }) => {
           value={formData.nama}
           onChange={handleInputChange}
           required
-          placeholder="Nama Barang"
+          placeholder="Item Belanja"
         />
-        <label htmlFor="nama" className="label">Nama Barang</label>
+        <label htmlFor="nama" className="label">Item Belanja</label>
       </div>
       <div className="wrapper">
         <input
