@@ -15,7 +15,7 @@ describe("CustomForm", () => {
     expect(screen.getByLabelText(/Nama Barang/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Harga Barang/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Jumlah Barang/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Unggah Gambar/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Upload Foto/i)).toBeInTheDocument();
   });
 
   it("can input data and submit, resets after submit", () => {
@@ -55,7 +55,7 @@ describe("CustomForm", () => {
 
   it("shows alert when uploading wrong image type", () => {
     render(<CustomForm addItem={addItem} />);
-    const fileInput = screen.getByLabelText(/Unggah Gambar/i);
+    const fileInput = screen.getByLabelText(/Upload Foto/i);
 
     const invalidFile = new File(["data"], "doc.pdf", { type: "application/pdf" });
     fireEvent.change(fileInput, { target: { files: [invalidFile] } });
@@ -64,7 +64,7 @@ describe("CustomForm", () => {
 
   it("shows alert when uploading too large image", () => {
     render(<CustomForm addItem={addItem} />);
-    const fileInput = screen.getByLabelText(/Unggah Gambar/i);
+    const fileInput = screen.getByLabelText(/Upload Foto/i);
 
     const bigFile = new File(["a".repeat(2 * 1024 * 1024)], "big.jpg", { type: "image/jpeg" });
     Object.defineProperty(bigFile, "size", { value: 2 * 1024 * 1024 });
@@ -74,7 +74,7 @@ describe("CustomForm", () => {
 
   it("handles clearing file input (file is undefined)", () => {
     render(<CustomForm addItem={addItem} />);
-    const fileInput = screen.getByLabelText(/Unggah Gambar/i);
+    const fileInput = screen.getByLabelText(/Upload Foto/i);
 
     // Simulasi file di-clear (files: [])
     fireEvent.change(fileInput, { target: { files: [] } });
@@ -84,7 +84,7 @@ describe("CustomForm", () => {
 
   it("uploads valid image (simulate FileReader)", async () => {
     render(<CustomForm addItem={addItem} />);
-    const fileInput = screen.getByLabelText(/Unggah Gambar/i);
+    const fileInput = screen.getByLabelText(/Upload Foto/i);
 
     const validFile = new File(["dummy"], "img.jpg", { type: "image/jpeg" });
     Object.defineProperty(validFile, "size", { value: 1000 });

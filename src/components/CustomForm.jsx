@@ -133,7 +133,7 @@ const CustomForm = ({ addItem }) => {
           accept="image/*"
           onChange={handleImageUpload}
         />
-        <label htmlFor="img" className="label">Unggah Gambar</label>
+        <label htmlFor="img" className="label">Upload Foto</label>
       </div>
       <button className="btn" aria-label="Add Item" type="submit">
         <PlusIcon />
