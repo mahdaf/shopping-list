@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import EditForm from "../components/EditForm";
 
 describe("EditForm", () => {
@@ -85,7 +85,7 @@ describe("EditForm", () => {
     expect(global.alert).not.toHaveBeenCalled();
   });
 
-  it("uploads valid image (simulate FileReader)", () => {
+  it("uploads valid image (simulate FileReader)", async () => {
     render(<EditForm editedTask={editedTask} updateTask={updateTask} closeEditMode={closeEditMode} />);
     const fileInput = screen.getByLabelText(/Update Gambar/i);
 
@@ -101,8 +101,12 @@ describe("EditForm", () => {
 
     fireEvent.change(fileInput, { target: { files: [validFile] } });
 
-    // Simulasi onloadend berjalan
-    if (readerMock.onloadend) readerMock.onloadend();
+    // Simulasi onloadend berjalan dengan act()
+    if (readerMock.onloadend) {
+      await act(async () => {
+        readerMock.onloadend();
+      });
+    }
     expect(readerMock.readAsDataURL).toHaveBeenCalled();
   });
 });

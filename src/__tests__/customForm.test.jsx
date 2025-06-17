@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import CustomForm from "../components/CustomForm";
 
 describe("CustomForm", () => {
@@ -82,7 +82,7 @@ describe("CustomForm", () => {
     expect(global.alert).not.toHaveBeenCalled();
   });
 
-  it("uploads valid image (simulate FileReader)", () => {
+  it("uploads valid image (simulate FileReader)", async () => {
     render(<CustomForm addItem={addItem} />);
     const fileInput = screen.getByLabelText(/Unggah Gambar/i);
 
@@ -98,8 +98,12 @@ describe("CustomForm", () => {
 
     fireEvent.change(fileInput, { target: { files: [validFile] } });
 
-    // Simulasi onloadend berjalan
-    if (readerMock.onloadend) readerMock.onloadend();
+    // Simulasi onloadend berjalan dengan act()
+    if (readerMock.onloadend) {
+      await act(async () => {
+        readerMock.onloadend();
+      });
+    }
     expect(readerMock.readAsDataURL).toHaveBeenCalled();
   });
 });

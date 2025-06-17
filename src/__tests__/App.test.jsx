@@ -1,6 +1,5 @@
-
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import App from "../App";
 import { BrowserRouter } from "react-router-dom";
 
@@ -121,10 +120,14 @@ describe("App Component", () => {
     expect(screen.getByText("Sabun")).toBeInTheDocument();
   });
 
-  it("handles logout confirmation", () => {
+  it("handles logout confirmation", async () => {
     window.confirm = jest.fn(() => true);
     renderApp();
-    fireEvent.click(screen.getByText("Logout"));
+    
+    await act(async () => {
+      fireEvent.click(screen.getByText("Logout"));
+    });
+    
     expect(window.confirm).toHaveBeenCalled();
   });
 
