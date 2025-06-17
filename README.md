@@ -16,6 +16,7 @@ Aplikasi Daftar Belanja adalah sebuah aplikasi web yang dirancang untuk membantu
 * **Pencarian Barang**: Dapat melakukan pencarian barang sesuai dengan keinginan pengguna.
 * **Login**: Pengguna dapat melakukan login akun dan akun terdaftar didalam firebase firestore.
 * **Register**: Pengguna dapat melakukan registrasi akun dan akan terdaftar didalam firebase forestore.
+* **Sorting**: Pengguna dapat melakukan sorting pencarian barangnya sesuai dengan keinginannya.
 
 ## 🛠️ Teknologi (Tech Stack)
 
