@@ -1,10 +1,9 @@
 name: Build and Deploy
 
 on:
-  workflow_run:
-    workflows: ["Build and Check Code Quality for Staging"]
-    types:
-      - completed
+  push:
+    branches:
+      - main
 
 jobs:
   build-and-push:
