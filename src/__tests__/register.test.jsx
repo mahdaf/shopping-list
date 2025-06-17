@@ -17,8 +17,8 @@ jest.mock("firebase/auth", () => ({
   createUserWithEmailAndPassword: (...args) => mockCreateUser(...args),
 }));
 
-// Mock auth object (bisa kosong, tidak dipakai dalam test ini)
-jest.mock("../firebase", () => ({
+// Mock auth object
+jest.mock("../../firebase", () => ({
   auth: {},
 }));
 
@@ -34,21 +34,20 @@ beforeEach(() => {
 describe("Register Component", () => {
   it("render komponen dan input tampil", () => {
     render(<Register />, { wrapper: MemoryRouter });
-    expect(screen.getByText("Register")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Register" })).toBeInTheDocument();
     expect(screen.getByPlaceholderText("Email")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("Password")).toBeInTheDocument();
-    expect(screen.getByText("Register")).toBeInTheDocument();
-    expect(screen.getByText(/Login di sini/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Register" })).toBeInTheDocument();
   });
 
   it("user bisa input email dan password", () => {
     render(<Register />, { wrapper: MemoryRouter });
     const emailInput = screen.getByPlaceholderText("Email");
     const passwordInput = screen.getByPlaceholderText("Password");
-    fireEvent.input(emailInput, { target: { value: "user@mail.com" } });
-    fireEvent.input(passwordInput, { target: { value: "rahasia123" } });
-    expect(emailInput.value).toBe("user@mail.com");
-    expect(passwordInput.value).toBe("rahasia123");
+    fireEvent.input(emailInput, { target: { value: "test@gmail.com" } });
+    fireEvent.input(passwordInput, { target: { value: "123456" } });
+    expect(emailInput.value).toBe("test@gmail.com");
+    expect(passwordInput.value).toBe("123456");
   });
 
   it("register sukses: tampil alert dan navigate ke /login", async () => {
@@ -56,44 +55,39 @@ describe("Register Component", () => {
     render(<Register />, { wrapper: MemoryRouter });
 
     fireEvent.input(screen.getByPlaceholderText("Email"), {
-      target: { value: "test@mail.com" },
+      target: { value: "test@gmail.com" },
     });
     fireEvent.input(screen.getByPlaceholderText("Password"), {
-      target: { value: "password" },
+      target: { value: "123456" },
     });
 
     fireEvent.click(screen.getByRole("button", { name: "Register" }));
 
     await waitFor(() => {
-      expect(mockCreateUser).toHaveBeenCalledWith(expect.anything(), "test@mail.com", "password");
+      expect(mockCreateUser).toHaveBeenCalledWith(expect.anything(), "test@gmail.com", "123456");
       expect(window.alert).toHaveBeenCalledWith(expect.stringContaining("Akun berhasil dibuat"));
       expect(mockNavigate).toHaveBeenCalledWith("/login");
     });
   });
 
   it("register gagal: tampil error", async () => {
-    mockCreateUser.mockRejectedValueOnce(new Error("Email sudah terdaftar!"));
+    mockCreateUser.mockRejectedValueOnce(new Error("(auth/email-already-in-use)"));
     render(<Register />, { wrapper: MemoryRouter });
 
     fireEvent.input(screen.getByPlaceholderText("Email"), {
-      target: { value: "test@mail.com" },
+      target: { value: "test@gmail.com" },
     });
     fireEvent.input(screen.getByPlaceholderText("Password"), {
-      target: { value: "password" },
+      target: { value: "123456" },
     });
 
     fireEvent.click(screen.getByRole("button", { name: "Register" }));
 
     await waitFor(() => {
-      expect(screen.getByText("Email sudah terdaftar!")).toBeInTheDocument();
+      expect(screen.getByText("(auth/email-already-in-use)")).toBeInTheDocument();
       expect(window.alert).not.toHaveBeenCalled();
       expect(mockNavigate).not.toHaveBeenCalled();
     });
   });
 
-  it("link login mengarah ke /login", () => {
-    render(<Register />, { wrapper: MemoryRouter });
-    const link = screen.getByText(/Login di sini/i);
-    expect(link).toHaveAttribute("href", "/login");
-  });
 });

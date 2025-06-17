@@ -39,14 +39,14 @@ describe("Login Component", () => {
   it("updates input values", () => {
     setup();
     fireEvent.input(screen.getByPlaceholderText("Email"), {
-      target: { value: "user@example.com" },
+      target: { value: "test@gmail.com" },
     });
     fireEvent.input(screen.getByPlaceholderText("Password"), {
-      target: { value: "password123" },
+      target: { value: "123456" },
     });
 
-    expect(screen.getByPlaceholderText("Email").value).toBe("user@example.com");
-    expect(screen.getByPlaceholderText("Password").value).toBe("password123");
+    expect(screen.getByPlaceholderText("Email").value).toBe("test@gmail.com");
+    expect(screen.getByPlaceholderText("Password").value).toBe("123456");
   });
 
   it("navigates to /beranda on successful login", async () => {
@@ -54,10 +54,10 @@ describe("Login Component", () => {
     setup();
 
     fireEvent.input(screen.getByPlaceholderText("Email"), {
-      target: { value: "user@example.com" },
+      target: { value: "test@gmail.com" },
     });
     fireEvent.input(screen.getByPlaceholderText("Password"), {
-      target: { value: "password123" },
+      target: { value: "123456" },
     });
     fireEvent.click(screen.getByRole("button", { name: /login/i }));
 
@@ -72,7 +72,7 @@ describe("Login Component", () => {
     setup();
 
     fireEvent.input(screen.getByPlaceholderText("Email"), {
-      target: { value: "wrong@example.com" },
+      target: { value: "wrong@gmail.com" },
     });
     fireEvent.input(screen.getByPlaceholderText("Password"), {
       target: { value: "wrongpass" },
