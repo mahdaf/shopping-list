@@ -7,6 +7,28 @@ import {
   browserSessionPersistence
 } from "firebase/auth"; 
 
+// Only define mocks in test environment
+let mockAuth, mockDb;
+if (process.env.NODE_ENV === 'test') {
+  mockAuth = {
+    onAuthStateChanged: jest.fn(),
+    signOut: jest.fn(),
+    currentUser: {
+      uid: 'KPbulMZyMDbUhE17nXgIVlLhAd13',
+      email: 'test@gmail.com'
+    }
+  };
+
+  mockDb = {
+    collection: jest.fn(() => ({
+      add: jest.fn(),
+      doc: jest.fn(),
+      where: jest.fn(),
+      get: jest.fn(),
+      onSnapshot: jest.fn()
+    }))
+  };
+}
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -21,13 +43,14 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-const auth = getAuth(app);
+const db = process.env.NODE_ENV === 'test' ? mockDb : getFirestore(app);
+const auth = process.env.NODE_ENV === 'test' ? mockAuth : getAuth(app);
 
 // memaksa session hanya berlaku per tab (bukan permanen)
-setPersistence(auth, browserSessionPersistence).catch((err) => {
-  console.error("Gagal set session persistence:", err);
-});
+if (process.env.NODE_ENV !== 'test') {
+  setPersistence(auth, browserSessionPersistence).catch((err) => {
+    console.error("Gagal set session persistence:", err);
+  });
+}
 
 export { db, auth };

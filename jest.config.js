@@ -1,34 +1,41 @@
 export default {
   testEnvironment: 'jsdom',
   transform: {
-    '^.+\\.(js|jsx)$': 'babel-jest',
+    '^.+\\.(js|jsx)$': ['babel-jest', { configFile: './babel.config.js' }]
   },
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
-      '<rootDir>/__mocks__/fileMock.js',
+      '<rootDir>/src/__mocks__/fileMock.js',
+    '^@/(.*)$': '<rootDir>/src/$1'
   },
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.js'],
   collectCoverageFrom: [
     'src/**/*.{js,jsx}',
-    '!src/main.jsx'
+    '!src/__tests__/**',
+    '!src/__mocks__/**'
   ],
-  coverageThreshold: {
-    global: {
-      branches: 0,
-      functions: 0,
-      lines: 0,
-      statements: 0,
-    },
-  },
   reporters: ['default'],
   testMatch: [
-    '<rootDir>/src/**/*.{js,jsx}'
+    '<rootDir>/src/__tests__/**/*.test.{js,jsx}'
   ],
   testPathIgnorePatterns: [
     '/node_modules/',
-    'src/setupTests.js',
-    'src/components/EditForm.jsx',
-    'src/components/CustomForm.jsx'
+    '/dist/',
+    '/coverage/',
+    'src/hooks/useFirestoreCollection.js'
+  ],
+  coveragePathIgnorePatterns: [
+  "/node_modules/",
+  "src/__tests__/",
+  "src/hooks/useFirestoreCollection.js",
+  ".test.jsx?$",
+  ".test.js?$"
+  ],
+  moduleDirectories: ['node_modules', 'src'],
+  verbose: true,
+  moduleFileExtensions: ['js', 'jsx', 'json', 'node'],
+  transformIgnorePatterns: [
+    '/node_modules/(?!(@testing-library|@babel)/)'
   ]
 };

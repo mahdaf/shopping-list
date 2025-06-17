@@ -87,7 +87,7 @@ const CustomForm = ({ addItem }) => {
   };
 
   return (
-    <form className="todo" onSubmit={handleFormSubmit}>
+    <form className="todo" onSubmit={handleFormSubmit} data-testid="form">
       <div className="wrapper">
         <input
           type="text"

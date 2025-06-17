@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-
 // library imports
 import { CheckIcon } from '@heroicons/react/24/solid';
 
@@ -78,6 +77,7 @@ const EditForm = ({ editedTask, updateTask, closeEditMode }) => {
       <form
         className="todo"
         onSubmit={handleFormSubmit}
+        data-testid="form"   // <<--- ADD THIS LINE
       >
         <div className="wrapper">
           <input

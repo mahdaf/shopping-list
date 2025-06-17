@@ -1,3 +1,5 @@
+// src/main.jsx
+
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
@@ -6,7 +8,6 @@ import Login from "./login";
 import Register from "./register";
 import { auth } from "../firebase";
 import "./index.css";
-import { act } from "react-dom/test-utils";
 
 const ProtectedRoute = ({ children }) => {
   const [user, setUser] = useState(undefined);
@@ -37,34 +38,11 @@ const Root = () => {
   );
 };
 
-// Hanya render ke DOM jika tidak dalam environment test
-if (process.env.NODE_ENV !== 'test') {
-  ReactDOM.createRoot(document.getElementById("root")).render(
-    <React.StrictMode>
-      <Root />
-    </React.StrictMode>
-  );
-}
-
-// Test suite
-if (process.env.NODE_ENV === 'test') {
-  describe('Root Component', () => {
-    it('renders without crashing', async () => {
-      const root = document.createElement('div');
-      root.id = 'root';
-      document.body.appendChild(root);
-      
-      await act(async () => {
-        ReactDOM.createRoot(root).render(
-          <React.StrictMode>
-            <Root />
-          </React.StrictMode>
-        );
-      });
-      
-      document.body.removeChild(root);
-    });
-  });
-}
-
+// Export untuk coverage
 export { Root, ProtectedRoute };
+
+// Render aplikasi ke DOM hanya jika elemen root ada
+const rootElement = document.getElementById("root");
+if (rootElement) {
+  ReactDOM.createRoot(rootElement).render(<Root />);
+}
