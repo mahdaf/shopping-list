@@ -244,7 +244,7 @@ describe("App Component", () => {
 
   it("handles user with email", () => {
     renderApp();
-    expect(screen.getByText(/Daftar Belanja Test/i)).toBeInTheDocument();
+    expect(screen.getByText(/Daftar Beli Test/i)).toBeInTheDocument();
   });
 
   it("handles search with no results", () => {
