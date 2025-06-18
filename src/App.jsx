@@ -111,12 +111,7 @@ function App() {
       <CustomForm addItem={handleAddItem} />
 
       <div className="search-sort-wrapper">
-        <div className="item-count">
-          {searchQuery ? 
-            `Menampilkan ${filteredItems.length} dari ${items.length} barang belanja` : 
-            `Menampilkan Total ${items.length} barang belanja`
-          }
-        </div>
+       
         
         <div className="sort-wrapper">
           <select
@@ -138,7 +133,7 @@ function App() {
           <input
             type="text"
             className="search-input"
-            placeholder="Cari nama barang..."
+            placeholder="Cari nama ..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
